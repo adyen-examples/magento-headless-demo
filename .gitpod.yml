@@ -35,7 +35,7 @@ tasks:
             echo "Starting application for '$path' in $(pwd)"
             npm run dev
           ;;
-      esac
+        esac
 
 ports: 
   - port: 8080
