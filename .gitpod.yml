@@ -37,26 +37,15 @@ tasks:
           ;;
         esac
 
-ports: |
-    case "$path" in
-      "magento-backend")
-        - port: 8080
-          onOpen: open-preview
-          visibility: public
-        - port: 9200
-          onOpen: ignore
-        - port: 9300
-          onOpen: ignore
-      ;;
-      "vue-frontend")
-        - port: 8080
-          onOpen: open-preview
-          visibility: public
-      ;;
-    esac
+ports: 
+    - port: 8080
+      onOpen: open-preview
+      visibility: public
+
   
 vscode:
   extensions: 
+      - ms-azuretools.vscode-docker
       - esbenp.prettier-vscode
       - dbaeumer.vscode-eslint
 
