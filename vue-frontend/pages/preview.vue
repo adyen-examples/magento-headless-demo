@@ -1,6 +1,7 @@
 <template>
   <main class="preview-page">
     <section class="cart">
+
       <div class="store-container">
         <div
           class="item-container"
@@ -58,16 +59,6 @@
                 -
               </button>
             </li>
-
-            <li class="order-summary-list-list-item">
-              <p class="order-summary-list-list-item-title"> CartID </p>
-              <p class="order-summary-list-list-item-price"> {{cartId}} </p>
-            </li>
-
-            <li class="order-summary-list-list-item">
-              <p class="order-summary-list-list-item-title"> GuestEmail </p>
-              <p class="order-summary-list-list-item-price"> {{guestEmail}} </p>
-            </li>
           </ul>
         </div>
 
@@ -79,13 +70,6 @@
           </nuxt-link>
         </div>
       </div>
-
-      <button
-        class="sum-toggle"
-        v-on:click="hideSummary()"
-      >
-        i
-      </button>
     </section>
   </main>
 </template>

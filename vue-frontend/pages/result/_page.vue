@@ -16,7 +16,7 @@
           Error! Please review response in console and refer to
           <a
             href="https://docs.adyen.com/development-resources/response-handling"
-            >Response handling.</a
+          >Response handling.</a
           >
         </span>
         <span v-else-if="type === 'failed'">
@@ -26,7 +26,7 @@
         <span v-else-if="type === 'pending'">
           Your order has been received! Payment completion pending.
         </span>
-        <span v-else> Your order has been successfully placed. </span>
+        <span v-else> Your order {{this.orderId}} has been successfully placed. </span>
       </p>
       <nuxt-link class="button" to="/">Return Home</nuxt-link>
     </div>
@@ -38,8 +38,28 @@ export default {
   head: {
     title: "Result",
   },
+  data() {
+    return {
+      orderId: '',
+      resultCode: '',
+    }
+  },
   asyncData({ route }) {
     return { type: route.params.page };
+  },
+  async mounted() {
+    this.orderId = localStorage.getItem('orderNumber');
+    this.resultCode = localStorage.getItem('resultCode');
+
+    console.log(this.orderId);
+    console.log(this.resultCode);
+
+  },
+
+  methods: {
+    storage() {
+
+    },
   },
 };
 </script>
