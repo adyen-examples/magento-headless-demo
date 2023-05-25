@@ -56,14 +56,8 @@ ports: |
     esac
   
 vscode:
-  extensions: |
-    case "$path" in
-      "magento-backend")
-        - ms-azuretools.vscode-docker
-      ;;
-      "vue-frontend")
-        - esbenp.prettier-vscode
-        - dbaeumer.vscode-eslint
-      ;;
-    esac  
+  extensions: 
+      - esbenp.prettier-vscode
+      - dbaeumer.vscode-eslint
+
    
