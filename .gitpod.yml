@@ -1,0 +1,55 @@
+tasks:
+  - name: Gitpod Task
+    before: |
+      echo "Retrieving the last part of the Workspace Context URL ..."
+      path=$(gp info | awk -F'/' '/Workspace Context URL/{print $NF}' | tr -d '[:space:]')
+      echo "Path '$path' is set."
+
+      echo "Build gradle for '$path' ..."
+      case "$path" in
+        "magento-backend")
+          echo "Build magento-backend application"
+          cd magento-backend && export APP_URL=`gp url 8080 | sed 's~https://~~'` && docker-compose up
+        ;;
+        "vue-frontend")
+          echo "Build vue-frontend application"
+          cd vue-frontend && npm install && |
+          if [ -z ${ADYEN_HMAC_KEY+x} ] || [[ -z ${ADYEN_API_KEY+x} ]] || [[ -z ${ADYEN_CLIENT_KEY+x} ]] || [[ -z ${ADYEN_MERCHANT_ACCOUNT+x} ]]; then
+            echo "Expected environment variables not found. Please set the ADYEN_HMAC_KEY, ADYEN_API_KEY, ADYEN_CLIENT_KEY, ADYEN_MERCHANT_ACCOUNT environment variables and rerun session https://gitpod.io/variables."
+          else
+            npm run dev
+          fi
+        ;;
+        *)
+          echo "Build default vue-frontend application instead because '$path' is not defined ..."
+          cd vue-frontend && npm install && |
+          if [ -z ${ADYEN_HMAC_KEY+x} ] || [[ -z ${ADYEN_API_KEY+x} ]] || [[ -z ${ADYEN_CLIENT_KEY+x} ]] || [[ -z ${ADYEN_MERCHANT_ACCOUNT+x} ]]; then
+            echo "Expected environment variables not found. Please set the ADYEN_HMAC_KEY, ADYEN_API_KEY, ADYEN_CLIENT_KEY, ADYEN_MERCHANT_ACCOUNT environment variables and rerun session https://gitpod.io/variables."
+          else
+            npm run dev
+          fi
+        ;;
+      esac
+
+
+ports: |
+  case "$path" in
+        "magento-backend")
+            - port: 8080
+              onOpen: open-preview
+            - port: 9200
+              onOpen: ignore
+            - port: 9300
+              onOpen: ignore
+        ;;
+        "vue-frontend")
+            - port: 8080
+              onOpen: open-preview
+              visibility: public
+        ;;
+      esac    
+vscode:
+  extensions:
+    - ms-azuretools.vscode-docker
+    - esbenp.prettier-vscode
+    - dbaeumer.vscode-eslint
