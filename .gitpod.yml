@@ -37,14 +37,13 @@ tasks:
           ;;
         esac
 
-  ports: 
-    - port: 8080
-      onOpen: open-preview
-      visibility: public
+ports:
+- port: 8080
+  onOpen: open-preview
+  visibility: public
 
 vscode:
-  extensions: 
-      - ms-azuretools.vscode-docker
-      - esbenp.prettier-vscode
-      - dbaeumer.vscode-eslint
-
+  extensions:
+    - esbenp.prettier-vscode
+    - dbaeumer.vscode-eslint
+    - ms-azuretools.vscode-docker
