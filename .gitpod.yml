@@ -15,15 +15,6 @@ tasks:
           echo "Build vue-frontend application"
           cd vue-frontend && npm install
         ;;
-        *)
-          echo "Build default vue-frontend application instead because '$path' is not defined ..."
-          cd vue-frontend && npm install && |
-          if [ -z ${ADYEN_HMAC_KEY+x} ] || [[ -z ${ADYEN_API_KEY+x} ]] || [[ -z ${ADYEN_CLIENT_KEY+x} ]] || [[ -z ${ADYEN_MERCHANT_ACCOUNT+x} ]]; then
-            echo "Expected environment variables not found. Please set the ADYEN_HMAC_KEY, ADYEN_API_KEY, ADYEN_CLIENT_KEY, ADYEN_MERCHANT_ACCOUNT environment variables and rerun session https://gitpod.io/variables."
-          else
-            npm run dev
-          fi
-        ;;
       esac
 
 command: |
@@ -38,6 +29,8 @@ command: |
           else
               npm run dev
           fi
+        ;;
+      esac
 
 ports: |
   case "$path" in
