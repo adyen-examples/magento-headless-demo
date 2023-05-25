@@ -24,7 +24,7 @@
     </div>
     <ul class="integration-list">
       <li class="integration-list-item">
-        <nuxt-link to="/preview?type=dropin" class="integration-list-item-link">
+        <nuxt-link to="/preview" class="integration-list-item-link">
           <div class="title-container">
             <p class="integration-list-item-title">Drop-in</p>
           </div>
