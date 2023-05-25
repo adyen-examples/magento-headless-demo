@@ -18,36 +18,17 @@ tasks:
       esac
 
 command: |
-        case "$path" in
-          "magento-backend")
-            export APP_URL=`gp url 8080 | sed 's~https://~~'`
-            docker-compose up
-        ;;
-        "vue-frontend")
           if [ -z ${ADYEN_HMAC_KEY+x} ] || [[ -z ${ADYEN_API_KEY+x} ]] || [[ -z ${ADYEN_CLIENT_KEY+x} ]] || [[ -z ${ADYEN_MERCHANT_ACCOUNT+x} ]]; then
               echo "Expected environment variables not found. Please set the ADYEN_HMAC_KEY, ADYEN_API_KEY, ADYEN_CLIENT_KEY, ADYEN_MERCHANT_ACCOUNT environment variables and rerun session https://gitpod.io/variables."
           else
               npm run dev
           fi
-        ;;
-      esac
 
-ports: |
-  case "$path" in
-        "magento-backend")
-            - port: 8080
-              onOpen: open-preview
-            - port: 9200
-              onOpen: ignore
-            - port: 9300
-              onOpen: ignore
-        ;;
-        "vue-frontend")
-            - port: 8080
-              onOpen: open-preview
-              visibility: public
-        ;;
-      esac    
+ports: 
+- port: 8080
+  onOpen: open-preview
+  visibility: public
+  
 vscode:
   extensions:
     - ms-azuretools.vscode-docker
