@@ -5,7 +5,7 @@ tasks:
       path=$(gp info | awk -F'/' '/Workspace Context URL/{print $NF}' | tr -d '[:space:]')
       echo "Path '$path' is set."
 
-      echo "Build gradle for '$path' ..."
+      echo "Prepare for for '$path' ..."
       case "$path" in
         "magento-backend")
           echo "Build magento-backend application"
@@ -18,6 +18,10 @@ tasks:
       esac
       
     command: |
+        echo "Retrieving the last part of the Workspace Context URL ..."
+        path=$(gp info | awk -F'/' '/Workspace Context URL/{print $NF}' | tr -d '[:space:]')
+        echo "Path '$path' is set."
+        
         case "$path" in
           "magento-backend")
             export APP_URL=`gp url 8080 | sed 's~https://~~'`
