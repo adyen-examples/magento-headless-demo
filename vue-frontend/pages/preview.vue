@@ -1,14 +1,15 @@
 <template>
   <main class="preview-page">
     <section class="cart">
-
+      <div class="margin-container">
+      </div>
       <div class="store-container">
         <div
           class="item-container"
           v-for="item in this.items"
         >
           <img
-            class="product-img"
+            class="store-product-img"
             :src="item.image.url"
           >
           <div class="statitle">
@@ -26,7 +27,7 @@
       <div class="summary-column">
         <div class="order-summary">
           <h2>
-            My Cart
+            Cart
           </h2>
           <ul class="order-summary-list">
             <li
@@ -54,7 +55,7 @@
               </button>
               <button
                 class="order-summary-list-list-item-button"
-                v-on:click=""
+                v-on:click="removeItemFromCart(prod.id)"
               >
                 -
               </button>
@@ -84,51 +85,47 @@ export default {
   },
   data() {
     return {
-      url: "https://8080-adyenexampl-adyenmagent-7j25ev8o4sr.ws-eu97.gitpod.io",
-      bearer: "mbvjlftxgpunwaiqi0tfsn2dhkhxpips",
+      url: "https://8080-carlosperal-magentohead-jgrlmaf92ao.ws-eu98.gitpod.io",
+      bearer: "srhww8n5c4u5coc5tv0b157zusq0j9yk",
       cartId: '',
       items: [],
       cartItems: [],
-      cartTotal: "0EUR",
+      cartTotal: "0 EUR",
     }
   },
 
   async mounted() {
-    this.storage();
-
-    await this.getCartId();
     await this.listStoreItems();
-
-    localStorage.setItem('cart', this.cartId);
-
+    await this.storage();
   },
 
   methods: {
-    storage() {
-      localStorage.setItem('url', 'https://8080-adyenexampl-adyenmagent-7j25ev8o4sr.ws-eu97.gitpod.io');
-      localStorage.setItem('bearer', "mbvjlftxgpunwaiqi0tfsn2dhkhxpips");
-    },
+    async storage() {
+      localStorage.setItem('url', this.url);
+      localStorage.setItem('bearer', this.bearer);
 
-    hideSummary() {
-      if (document.getElementsByClassName("hidden").length) {
-        document.getElementsByClassName("summary-column")[0].classList.remove("hidden");;
+      let storedCart = localStorage.getItem('cart');
+      if (storedCart) {
+        this.cartId = storedCart;
+      } else {
+        await this.getCartId();
+        localStorage.setItem('cart', this.cartId);
       }
-      else {
-        document.getElementsByClassName("summary-column")[0].classList.add("hidden");;
+
+      let storedCartItems = localStorage.getItem('cartItems');
+      if (storedCartItems) {
+        this.cartItems = JSON.parse(storedCartItems);
       }
     },
 
     async getCartId() {
       try {
-        const host = this.url;
-        const bearer = this.bearer;
-
         // Create cart data
         const data = JSON.stringify({
           query: `mutation{createEmptyCart}`,
         });
 
-        const response = await this.sendGraphQLReq(host, bearer, data);
+        const response = await this.sendGraphQLReq(data);
 
         this.cartId = response.data.createEmptyCart;
         return response;
@@ -139,18 +136,14 @@ export default {
       }
     },
 
-
     async listStoreItems() {
       try{
-        const host = this.url;
-        const bearer = this.bearer;
-
 
         const data = JSON.stringify({
           query:  `{products( search: "Messenger" filter: { price: { to: "50" } } pageSize: 25 sort: { price: DESC }) { items { name sku image { url label position disabled } price_range { minimum_price { regular_price { value currency } } }} total_count page_info { page_size }}}`,
         });
 
-        const response = await this.sendGraphQLReq(host, bearer, data);
+        const response = await this.sendGraphQLReq(data);
         this.items = response.data.products.items;
         // this.logStatus();
 
@@ -164,9 +157,6 @@ export default {
 
     async addItemToCart(item) {
       try {
-
-        const host = this.url;
-        const bearer = this.bearer;
         const cartId = this.cartId;
         const sku = item.sku;
         const quantity = 1;
@@ -177,13 +167,13 @@ export default {
           query: `mutation{ addProductsToCart( cartId: `
             + '"' + cartId + '"'
             + ` cartItems: [` + products
-            + `] ) {  cart {  items { product { name  sku image { url label position disabled } price_range { minimum_price { regular_price { value currency } } } } quantity } prices { grand_total { value currency } }  } } }`,
+            + `] ) {  cart {  items { id product { name  sku image { url label position disabled } price_range { minimum_price { regular_price { value currency } } } } quantity } prices { grand_total { value currency } }  } } }`,
         });
 
-        const response = await this.sendGraphQLReq(host, bearer, data);
+        const response = await this.sendGraphQLReq(data);
         this.cartItems = response.data.addProductsToCart.cart.items;
-        this.cartTotal = response.data.addProductsToCart.cart.prices.grand_total.value + response.data.addProductsToCart.cart.prices.grand_total.currency;
-        console.log(response.data.addProductsToCart.cart.prices.grand_total.value + response.data.addProductsToCart.cart.prices.grand_total.currency);
+        this.cartTotal = response.data.addProductsToCart.cart.prices.grand_total.value + " " + response.data.addProductsToCart.cart.prices.grand_total.currency;
+        localStorage.setItem('cartItems', JSON.stringify(this.cartItems));
 
         return response;
 
@@ -195,20 +185,21 @@ export default {
 
     async removeItemFromCart(item) {
       try {
-        const host = this.url;
-        const bearer = this.bearer;
         const cartId = this.cartId;
-        const sku = item.sku;
-        const quantity = 1;
-        const products = '{ quantity:' + quantity + ' sku:' + '"' + sku + '"' +'}';
+        const productId = item;
 
         // Add items to cart
         const data = JSON.stringify({
-          query: `mutation{ addProductsToCart( cartId: ` + cartId + ` cartItems: [` + products + `] ) {  cart {  items { product { name  sku } quantity }  } } }`,
+          query: `mutation{ removeItemFromCart( input: { cart_id: `
+            + '"' + cartId + '"'
+            + `, cart_item_id: `
+            + '"' + productId + '"'
+            + ` }) {  cart {  items { id product { name  sku image { url label position disabled } price_range { minimum_price { regular_price { value currency } } } } quantity } prices { grand_total { value currency } }  } } }`,
         });
 
-        const response = await this.sendGraphQLReq(host, bearer, data);
-        this.cartItems = response.data.addProductsToCart.cart.items;
+        const response = await this.sendGraphQLReq(data);
+        this.cartItems = response.data.removeItemFromCart.cart.items;
+        localStorage.setItem('cartItems', JSON.stringify(this.cartItems));
         return response;
 
       } catch (error) {
@@ -217,8 +208,10 @@ export default {
       }
     },
 
-    async sendGraphQLReq(host, bearer, data) {
+    async sendGraphQLReq(data) {
       try {
+        const host = this.url;
+        const bearer = this.bearer;
         var response;
         response = await fetch(host +'/graphql', {
           method: 'POST',
