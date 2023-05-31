@@ -400,7 +400,7 @@ a:hover {
   border-radius: 12px;
   padding-top: 18px;
   padding-bottom: 18px;
-  width: 90%;
+  width: 100%;
   height: 100%;
   flex-direction: column;
   margin-top: 20px;
@@ -578,7 +578,8 @@ tr {
 }
 
 .forms {
-  width: 80%;
+  width: 100%;
+  text-align: left;
 }
 
 .forms input {
@@ -680,3 +681,19 @@ form {
   width: 15%;
 }
 
+.top-container {
+  text-align: center;
+  margin-top: 80px;
+  display: flex;
+  flex-direction: row;
+}
+
+.bottom-container {
+  display: flex;
+  flex-direction: column;
+  width: 70%;
+  align-content: center;
+  align-items: center;
+  margin-top: 5%;
+  margin-left: 15%;
+}
