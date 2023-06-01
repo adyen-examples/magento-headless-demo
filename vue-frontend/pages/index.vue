@@ -3,7 +3,12 @@
     <div class="info">
       <h1>Select a demo</h1>
       <p>
-        Click to view an interactive example of a PCI-compliant UI integration
+        Click to view an interactive example of headless checkout integration for Adobe Commerce platform +
+        <a
+          href="https://github.com/Adyen/adyen-magento2"
+        >
+          Adyen plugin
+        </a>
         for online payments.
       </p>
       <p>
@@ -26,7 +31,14 @@
       <li class="integration-list-item">
         <nuxt-link to="/preview" class="integration-list-item-link">
           <div class="title-container">
-            <p class="integration-list-item-title">Drop-in</p>
+            <p class="integration-list-item-title">GraphQL Checkout</p>
+          </div>
+        </nuxt-link>
+      </li>
+      <li class="integration-list-item">
+        <nuxt-link to="/" class="integration-list-item-link">
+          <div class="title-container">
+            <p class="integration-list-item-title">REST Checkout (TBD)</p>
           </div>
         </nuxt-link>
       </li>

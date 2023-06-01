@@ -89,6 +89,7 @@ a:hover {
   padding: 0 16px;
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 .integration-list {
@@ -603,6 +604,7 @@ tr {
   width: 10%;
   padding: 1%;
   margin-bottom: 2%;
+  min-width: 69px;;
 }
 
 .forms #samebilling {
@@ -696,4 +698,15 @@ form {
   align-items: center;
   margin-top: 5%;
   margin-left: 15%;
+}
+
+.statval button {
+  background-color: #3a4a5c;
+  color: #f7f8f9;
+  border: none;
+  border-radius: 10px;
+  width: 10%;
+  padding: 1%;
+  margin-bottom: 2%;
+  min-width: 80px;
 }

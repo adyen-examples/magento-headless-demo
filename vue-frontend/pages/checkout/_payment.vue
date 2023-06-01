@@ -150,7 +150,7 @@
           </ul>
           <div class="cart-footer">
             <span class="cart-footer-label"> Total: </span>
-            <span class="cart-footer-amount"> 0 EUR </span>
+            <span class="cart-footer-amount"> {{cartTotal}} </span>
           </div>
         </div>
       </div>
@@ -216,6 +216,8 @@ export default {
       adyenStatusResponse: '',
       paymentMethodsResponse: '',
       orderId:'',
+      cartItems:'',
+      cartTotal: '',
       stateData:'',
       shopperBillingAddress: {
         firstName: '',
@@ -280,6 +282,11 @@ export default {
       let storedShipMethods = localStorage.getItem('shipMethods');
       if(storedShipMethods){
         this.shippingMethods = JSON.parse(storedShipMethods);
+      }
+
+      let storedCartTotal = localStorage.getItem('cartTotal');
+      if (storedCartTotal) {
+        this.cartTotal = JSON.parse(storedCartTotal);
       }
     },
 
@@ -435,15 +442,14 @@ export default {
       const pmExclude = ['alipay', 'unionpay', 'applepay', 'c_cash', 'wechatpayQR', 'genericgiftcard', 'givex', 'bankTransfer_NL', 'ratepay', 'paypal', 'giftcard', 'eps', 'sepadirectdebit', 'multibanco'];
       this.paymentMethods = this.paymentMethods.filter((pm, index) => !pmExclude.includes(pm.type));
       this.paymentMethodsResponse.paymentMethods = this.paymentMethodsResponse.paymentMethods.filter((pm, index) => !pmExclude.includes(pm.type));
-      console.log(this.paymentMethods);
-      console.log(this.paymentMethodsResponse.paymentMethods);
       let configs = this.paymentMethods.map(pm => {
         if (pm.configuration) {
           if(pm.type == 'scheme'){ pm.type = 'card'; }
           configuration['paymentMethodsConfiguration'][pm.type] = pm.configuration;
           configuration['paymentMethodsConfiguration'][pm.type]['showPayButton'] = true;
         }
-      })
+      });
+
       const checkout = await AdyenCheckout(configuration);
       this.checkout = checkout;
 
@@ -467,12 +473,6 @@ export default {
 
       switch (paymentStatus.resultCode) {
         case "Authorised":
-          localStorage.removeItem('cart');
-          localStorage.removeItem('cartItems');
-          localStorage.removeItem('shipping');
-          localStorage.removeItem('billing');
-          localStorage.removeItem('shipMethods');
-
           window.location.href = window.location.origin + '/result/success';
           break;
         case "Pending":
@@ -727,7 +727,6 @@ export default {
         const response = await this.sendGraphQLReq(data);
         this.paymentMethods = response.data.adyenPaymentMethods.paymentMethodsExtraDetails;
         this.paymentMethodsResponse = response.data.adyenPaymentMethods.paymentMethodsResponse;
-        console.log(this.paymentMethodsResponse.paymentMethods[0].name);
 
         await this.createConfig();
         return response;
@@ -750,7 +749,6 @@ export default {
         });
 
         const response = await this.sendGraphQLReq(data);
-        console.log(response);
         return response;
 
       } catch (error) {
