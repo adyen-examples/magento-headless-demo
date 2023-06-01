@@ -18,6 +18,7 @@
           <div class="statval">
             {{item.price_range.minimum_price.regular_price.value}}
             {{item.price_range.minimum_price.regular_price.currency}}
+            <br>
             <button v-on:click="addItemToCart(item)">
               Add to Cart
             </button>
@@ -116,6 +117,11 @@ export default {
       if (storedCartItems) {
         this.cartItems = JSON.parse(storedCartItems);
       }
+
+      let storedCartTotal = localStorage.getItem('cartTotal');
+      if (storedCartTotal) {
+        this.cartTotal = JSON.parse(storedCartTotal);
+      }
     },
 
     async getCartId() {
@@ -174,6 +180,7 @@ export default {
         this.cartItems = response.data.addProductsToCart.cart.items;
         this.cartTotal = response.data.addProductsToCart.cart.prices.grand_total.value + " " + response.data.addProductsToCart.cart.prices.grand_total.currency;
         localStorage.setItem('cartItems', JSON.stringify(this.cartItems));
+        localStorage.setItem('cartTotal', JSON.stringify(this.cartTotal));
 
         return response;
 

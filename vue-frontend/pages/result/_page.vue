@@ -54,6 +54,13 @@ export default {
     console.log(this.orderId);
     console.log(this.resultCode);
 
+    localStorage.removeItem('cart');
+    localStorage.removeItem('cartTotal');
+    localStorage.removeItem('cartItems');
+    localStorage.removeItem('shipping');
+    localStorage.removeItem('billing');
+    localStorage.removeItem('shipMethods');
+
   },
 
   methods: {
