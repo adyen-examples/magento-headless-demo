@@ -86,8 +86,8 @@ export default {
   },
   data() {
     return {
-      url: "https://8080-carlosperal-magentohead-jgrlmaf92ao.ws-eu98.gitpod.io",
-      bearer: "srhww8n5c4u5coc5tv0b157zusq0j9yk",
+      url: "$BaseURL",
+      bearer: "$MagentoToken",
       cartId: '',
       items: [],
       cartItems: [],
@@ -227,7 +227,7 @@ export default {
             "Content-Type": "application/json",
             'Content-Length': data.length,
             Authorization: 'Bearer '+ bearer,
-            'Origin': 'https://8080-adyenexampl-adyenvueonl-wumtblawveo.ws-eu96.gitpod.io',
+            'Origin': '$BaseURL',
           },
           body: data,
         })
