@@ -1,93 +1,44 @@
 <template>
-  <main class="preview-page">
-    <section class="cart">
-      <div class="margin-container">
+  <main className="preview-page">
+    <section className="cart">
+      <div className="margin-container">
       </div>
-      <div class="store-container">
-        <div
-          class="item-container"
-          v-for="item in this.items"
-        >
-          <img
-            class="store-product-img"
-            :src="item.image.url"
-          >
-          <div class="statitle">
-            {{item.name}}
-          </div>
-          <div class="statval">
-            {{item.price_range.minimum_price.regular_price.value}}
-            {{item.price_range.minimum_price.regular_price.currency}}
-            <br>
-            <button v-on:click="addItemToCart(item)">
-              Add to Cart
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="summary-column">
-        <div class="order-summary">
-          <h2>
-            Cart
-          </h2>
-          <ul class="order-summary-list">
-            <li
-              class="order-summary-list-list-item"
-              v-if="cartItems.length"
-              v-for="prod in this.cartItems"
-            >
-              <img
-                class="product-img"
-                :src="prod.product.image.url"
-              />
-              <p class="order-summary-list-list-item-title">
-                {{prod.product.name}}
-              </p>
-              <p class="order-summary-list-list-item-price">
-                {{prod.product.price_range.minimum_price.regular_price.value}}
-                {{prod.product.price_range.minimum_price.regular_price.currency}}
-                ({{prod.quantity}})
-              </p>
-              <button
-                class="order-summary-list-list-item-button"
-                v-on:click="addItemToCart(prod.product)"
-              >
-                +
-              </button>
-              <button
-                class="order-summary-list-list-item-button"
-                v-on:click="removeItemFromCart(prod.id)"
-              >
-                -
-              </button>
-            </li>
-          </ul>
-        </div>
-
-        <div class="cart-footer">
-          <span class="cart-footer-label"> Total: </span>
-          <span class="cart-footer-amount"> {{cartTotal}} </span>
-          <nuxt-link :to="`/checkout/${type}`">
-            <p class="button">Continue to checkout</p>
-          </nuxt-link>
-        </div>
+      <StoreList
+        v-bind:items="items"
+        @add-item="addItemToCart"
+      />
+      <div className="summary-column">
+        <Cart
+          v-bind:cartItems="cartItems"
+          v-bind:cartTotal="cartTotal"
+          v-bind:cartActions="true"
+          @add-item="addItemToCart"
+          @remove-item="removeItemFromCart"
+        />
       </div>
     </section>
   </main>
 </template>
 
 <script>
+import Cart from '../components/Cart.vue';
+import StoreList from '../components/StoreList.vue';
+
 export default {
-  asyncData({ route }) {
-    return { type: route.query.type };
+  asyncData({route}) {
+    return {type: route.query.type};
   },
   head: {
     title: "Cart preview",
   },
+  components: {
+    Cart,
+    StoreList,
+  },
   data() {
     return {
-      url: "$BaseURL",
-      bearer: "$MagentoToken",
+      url: "https://8080-carlosperal-magentohead-untn4qp5edj.ws-eu99.gitpod.io",
+      bearer: "0dpey82z6n141yr19l9ulmbwf6e0jhel",
       cartId: '',
       items: [],
       cartItems: [],
@@ -143,10 +94,10 @@ export default {
     },
 
     async listStoreItems() {
-      try{
+      try {
 
         const data = JSON.stringify({
-          query:  `{products( search: "Messenger" filter: { price: { to: "50" } } pageSize: 25 sort: { price: DESC }) { items { name sku image { url label position disabled } price_range { minimum_price { regular_price { value currency } } }} total_count page_info { page_size }}}`,
+          query: `{products( search: "Messenger" filter: { price: { to: "50" } } pageSize: 25 sort: { price: DESC }) { items { name sku image { url label position disabled } price_range { minimum_price { regular_price { value currency } } }} total_count page_info { page_size }}}`,
         });
 
         const response = await this.sendGraphQLReq(data);
@@ -166,7 +117,7 @@ export default {
         const cartId = this.cartId;
         const sku = item.sku;
         const quantity = 1;
-        const products = '{ quantity:' + quantity + ' sku:' + '"' + sku + '"' +'}';
+        const products = '{ quantity:' + quantity + ' sku:' + '"' + sku + '"' + '}';
 
         // Add items to cart
         const data = JSON.stringify({
@@ -220,13 +171,13 @@ export default {
         const host = this.url;
         const bearer = this.bearer;
         var response;
-        response = await fetch(host +'/graphql', {
+        response = await fetch(host + '/graphql', {
           method: 'POST',
           mode: 'cors',
           headers: {
             "Content-Type": "application/json",
             'Content-Length': data.length,
-            Authorization: 'Bearer '+ bearer,
+            Authorization: 'Bearer ' + bearer,
             'Origin': '$BaseURL',
           },
           body: data,
