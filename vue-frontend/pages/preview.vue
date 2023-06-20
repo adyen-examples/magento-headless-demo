@@ -37,8 +37,8 @@ export default {
   },
   data() {
     return {
-      url: "https://8080-carlosperal-magentohead-untn4qp5edj.ws-eu100.gitpod.io",
-      bearer: "rj8zscja6odfojyhnac7wgfkmz2vlp5s",
+      url: "$baseURL",
+      bearer: "$bearerToken",
       cartId: '',
       items: [],
       cartItems: [],
