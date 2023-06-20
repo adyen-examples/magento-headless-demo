@@ -1,21 +1,22 @@
 <template>
-  <main className="preview-page">
-    <section className="cart">
-      <div className="margin-container">
-      </div>
-      <StoreList
-        v-bind:items="items"
+  <main class="preview-page">
+    classNamection class="cart">
+    <divclassNames
+    ="margin-container"className   </div>
+    <StoreList
+      v-bind:items="items"
+      @add-item="addItemToCart"
+    />
+    <div class="summary-column">
+      className
+      <Cart
+        v-bind:cartItems="cartItems"
+        v-bind:cartTotal="cartTotal"
+        v-bind:cartActions="true"
         @add-item="addItemToCart"
+        @remove-item="removeItemFromCart"
       />
-      <div className="summary-column">
-        <Cart
-          v-bind:cartItems="cartItems"
-          v-bind:cartTotal="cartTotal"
-          v-bind:cartActions="true"
-          @add-item="addItemToCart"
-          @remove-item="removeItemFromCart"
-        />
-      </div>
+    </div>
     </section>
   </main>
 </template>
@@ -37,8 +38,8 @@ export default {
   },
   data() {
     return {
-      url: "$baseURL",
-      bearer: "$bearerToken",
+      url: "https://8080-carlosperal-magentohead-untn4qp5edj.ws-eu100.gitpod.io",
+      bearer: "rj8zscja6odfojyhnac7wgfkmz2vlp5s",
       cartId: '',
       items: [],
       cartItems: [],
