@@ -1,22 +1,21 @@
 <template>
   <main class="preview-page">
-    classNamection class="cart">
-    <divclassNames
-    ="margin-container"className   </div>
-    <StoreList
-      v-bind:items="items"
-      @add-item="addItemToCart"
-    />
-    <div class="summary-column">
-      className
-      <Cart
-        v-bind:cartItems="cartItems"
-        v-bind:cartTotal="cartTotal"
-        v-bind:cartActions="true"
+    <section class="cart">
+      <div class="margin-container">
+      </div>
+      <StoreList
+        v-bind:items="items"
         @add-item="addItemToCart"
-        @remove-item="removeItemFromCart"
       />
-    </div>
+      <div class="summary-column">
+        <Cart
+          v-bind:cartItems="cartItems"
+          v-bind:cartTotal="cartTotal"
+          v-bind:cartActions="true"
+          @add-item="addItemToCart"
+          @remove-item="removeItemFromCart"
+        />
+      </div>
     </section>
   </main>
 </template>
