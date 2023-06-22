@@ -178,7 +178,7 @@ export default {
             "Content-Type": "application/json",
             'Content-Length': data.length,
             Authorization: 'Bearer '+ bearer,
-            'Origin': '$BaseURL',
+            'Origin': '$baseURL',
           },
           body: data,
         })

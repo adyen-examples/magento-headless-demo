@@ -140,7 +140,7 @@ export default {
     return {
       url: "",
       bearer: "",
-      clientKey: "test_Y6ET72GBOBFGXFVJCPAHJTQU4MVGZDSR",
+      clientKey: "$ADYEN_CLIENT_KEY",
       cartId: '',
       redirectResult: '',
       checkout: '',
