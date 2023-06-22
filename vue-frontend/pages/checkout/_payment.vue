@@ -120,7 +120,11 @@ import RefreshIcon from '../../components/RefreshIcon.vue';
 import Cart from '../../components/Cart.vue';
 import PaymentArea from '../../components/PaymentArea.vue';
 
+const dotenv = require("dotenv");
 
+dotenv.config({
+  path: "./.env",
+});
 
 if (process.client) {
   AdyenCheckout = require("@adyen/adyen-web");
@@ -140,7 +144,7 @@ export default {
     return {
       url: "",
       bearer: "",
-      clientKey: "$ADYEN_CLIENT_KEY",
+      clientKey: process.env.ADYEN_CLIENT_KEY,
       cartId: '',
       redirectResult: '',
       checkout: '',
