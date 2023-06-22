@@ -31,6 +31,11 @@ tasks:
               exit 1
             fi
 
+            cp .env.example .env
+            sed -i~ "s|.*baseUrl=*|baseUrl=$baseUrl|" .env
+            sed -i~ "s|.*bearerToken=*|bearerToken=$bearerToken|" .env
+            sed -i~ "s|.*ADYEN_CLIENT_KEY=*|ADYEN_CLIENT_KEY=$ADYEN_CLIENT_KEY|" .env
+
             # Run the application based on specified $path.
             echo "Starting application for '$path' in $(pwd)"
             npm run dev
