@@ -30,10 +30,10 @@ tasks:
               echo "Expected environment variables not found. Please set the ADYEN_HMAC_KEY, ADYEN_API_KEY, ADYEN_CLIENT_KEY, ADYEN_MERCHANT_ACCOUNT environment variables and rerun session https://gitpod.io/variables."
               exit 1
             else
-              cp ./vue-frontend/.env.example ./vue-frontend/.env
-              sed -i~ "s|.*baseUrl=*|baseUrl=$baseUrl|" ./vue-frontend/.env
-              sed -i~ "s|.*bearerToken=*|bearerToken=$bearerToken|" ./vue-frontend/.env
-              sed -i~ "s|.*ADYEN_CLIENT_KEY=*|ADYEN_CLIENT_KEY=$ADYEN_CLIENT_KEY|" ./vue-frontend/.env
+              cp .env.example .env
+              sed -i~ "s|.*baseUrl=*|baseUrl=$baseUrl|" .env
+              sed -i~ "s|.*bearerToken=*|bearerToken=$bearerToken|" .env
+              sed -i~ "s|.*ADYEN_CLIENT_KEY=*|ADYEN_CLIENT_KEY=$ADYEN_CLIENT_KEY|" .env
             fi
 
             # Run the application based on specified $path.
