@@ -27,7 +27,7 @@ tasks:
             # Check if environment variables are set in https://gitpod.io/variables.
             echo "Checking if environment variables are set ..."
             if [ -z ${baseUrl+x} ] || [[ -z ${bearerToken+x} ]] || [[ -z ${ADYEN_CLIENT_KEY+x} ]]; then
-              echo "Expected environment variables not found. Please set the ADYEN_HMAC_KEY, ADYEN_API_KEY, ADYEN_CLIENT_KEY, ADYEN_MERCHANT_ACCOUNT environment variables and rerun session https://gitpod.io/variables."
+              echo "Expected environment variables not found. Please set the bearerToken, baseUrl, ADYEN_CLIENT_KEY environment variables and rerun session https://gitpod.io/variables."
               exit 1
             else
               cp .env.example .env
