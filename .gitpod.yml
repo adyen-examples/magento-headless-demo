@@ -31,10 +31,10 @@ tasks:
               exit 1
             fi
 
-            cp .env.example .env
-            sed -i~ "s|.*baseUrl=*|baseUrl=$baseUrl|" .env
-            sed -i~ "s|.*bearerToken=*|bearerToken=$bearerToken|" .env
-            sed -i~ "s|.*ADYEN_CLIENT_KEY=*|ADYEN_CLIENT_KEY=$ADYEN_CLIENT_KEY|" .env
+            cp vue-frontend/.env.example vue-frontend/.env
+            sed -i~ "s|.*baseUrl=*|baseUrl=$baseUrl|" vue-frontend/.env
+            sed -i~ "s|.*bearerToken=*|bearerToken=$bearerToken|" vue-frontend/.env
+            sed -i~ "s|.*ADYEN_CLIENT_KEY=*|ADYEN_CLIENT_KEY=$ADYEN_CLIENT_KEY|" vue-frontend/.env
 
             # Run the application based on specified $path.
             echo "Starting application for '$path' in $(pwd)"
