@@ -43,8 +43,8 @@ export default {
   },
   data() {
     return {
-      url: process.env.baseURL,
-      bearer: process.env.bearerToken,
+      url: process.env.BASE_URL,
+      bearer: process.env.BEARER_TOKEN,
       cartId: '',
       items: [],
       cartItems: [],
