@@ -34,7 +34,7 @@ tasks:
               cp .env.example .env
               sed -i~ "s|.*BASE_URL=*|BASE_URL=$BASE_URL|" .env
               sed -i~ "s|.*BEARER_TOKEN=*|BEARER_TOKEN=$BEARER_TOKEN|" .env
-              sed -i~ "s|.*CLIENT_KEY=*|CLIENT_KEY=$ADYEN_CLIENT_KEY|" .env
+              sed -i~ "s|.*CLIENT_KEY=*|ADYEN_CLIENT_KEY=$ADYEN_CLIENT_KEY|" .env
             fi
 
             # Run the application based on specified $path.
