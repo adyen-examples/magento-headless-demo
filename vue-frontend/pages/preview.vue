@@ -24,12 +24,6 @@
 import Cart from '../components/Cart.vue';
 import StoreList from '../components/StoreList.vue';
 
-const dotenv = require("dotenv");
-
-dotenv.config({
-  path: "./.env",
-});
-
 export default {
   asyncData({route}) {
     return {type: route.query.type};
@@ -43,8 +37,6 @@ export default {
   },
   data() {
     return {
-      url: process.env.BASE_URL,
-      bearer: process.env.BEARER_TOKEN,
       cartId: '',
       items: [],
       cartItems: [],
@@ -59,8 +51,6 @@ export default {
 
   methods: {
     async storage() {
-      localStorage.setItem('url', this.url);
-      localStorage.setItem('bearer', this.bearer);
 
       let storedCart = localStorage.getItem('cart');
       if (storedCart) {
@@ -174,8 +164,8 @@ export default {
 
     async sendGraphQLReq(data) {
       try {
-        const host = this.url;
-        const bearer = this.bearer;
+        const host = process.env.BASE_URL;
+        const bearer = process.env.BEARER_TOKEN;
         var response;
         response = await fetch(host + '/graphql', {
           method: 'POST',
