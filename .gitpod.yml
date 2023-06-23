@@ -30,8 +30,8 @@ tasks:
               echo "Expected environment variables not found. Please set the bearerToken, baseUrl, ADYEN_CLIENT_KEY environment variables and rerun session https://gitpod.io/variables."
               exit 1
             else
-              cd vue-frontend/
-              cp ../.env.example .env
+              echo "I AM HERE"
+              cp .env.example .env
               sed -i~ "s|.*BASE_URL=*|BASE_URL=$BASE_URL|" .env
               sed -i~ "s|.*BEARER_TOKEN=*|BEARER_TOKEN=$BEARER_TOKEN|" .env
               sed -i~ "s|.*ADYEN_CLIENT_KEY=*|ADYEN_CLIENT_KEY=$ADYEN_CLIENT_KEY|" .env
