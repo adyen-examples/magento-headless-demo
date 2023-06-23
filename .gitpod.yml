@@ -31,8 +31,8 @@ tasks:
               exit 1
             else
               cp .env.example .env
-              sed -i~ "s|.*baseUrl=*|baseUrl=$baseUrl|" .env
-              sed -i~ "s|.*bearerToken=*|bearerToken=$bearerToken|" .env
+              sed -i~ "s|.*BASE_URL=*|BASE_URL=$BASE_URL|" .env
+              sed -i~ "s|.*BEARER_TOKEN=*|BEARER_TOKEN=$BEARER_TOKEN|" .env
               sed -i~ "s|.*ADYEN_CLIENT_KEY=*|ADYEN_CLIENT_KEY=$ADYEN_CLIENT_KEY|" .env
             fi
 
