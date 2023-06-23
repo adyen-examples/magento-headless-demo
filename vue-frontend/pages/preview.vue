@@ -25,8 +25,8 @@ import Cart from '../components/Cart.vue';
 import StoreList from '../components/StoreList.vue';
 
 export default {
-  asyncData({ route }) {
-    return { type: route.query.type };
+  asyncData({route}) {
+    return {type: route.query.type};
   },
   head: {
     title: "Cart preview",
@@ -37,8 +37,6 @@ export default {
   },
   data() {
     return {
-      url: "$baseURL",
-      bearer: "$bearerToken",
       cartId: '',
       items: [],
       cartItems: [],
@@ -53,8 +51,6 @@ export default {
 
   methods: {
     async storage() {
-      localStorage.setItem('url', this.url);
-      localStorage.setItem('bearer', this.bearer);
 
       let storedCart = localStorage.getItem('cart');
       if (storedCart) {
@@ -94,10 +90,10 @@ export default {
     },
 
     async listStoreItems() {
-      try{
+      try {
 
         const data = JSON.stringify({
-          query:  `{products( search: "Messenger" filter: { price: { to: "50" } } pageSize: 25 sort: { price: DESC }) { items { name sku image { url label position disabled } price_range { minimum_price { regular_price { value currency } } }} total_count page_info { page_size }}}`,
+          query: `{products( search: "Messenger" filter: { price: { to: "50" } } pageSize: 25 sort: { price: DESC }) { items { name sku image { url label position disabled } price_range { minimum_price { regular_price { value currency } } }} total_count page_info { page_size }}}`,
         });
 
         const response = await this.sendGraphQLReq(data);
@@ -117,7 +113,7 @@ export default {
         const cartId = this.cartId;
         const sku = item.sku;
         const quantity = 1;
-        const products = '{ quantity:' + quantity + ' sku:' + '"' + sku + '"' +'}';
+        const products = '{ quantity:' + quantity + ' sku:' + '"' + sku + '"' + '}';
 
         // Add items to cart
         const data = JSON.stringify({
@@ -168,16 +164,16 @@ export default {
 
     async sendGraphQLReq(data) {
       try {
-        const host = this.url;
-        const bearer = this.bearer;
+        const host = process.env.BASE_URL;
+        const bearer = process.env.BEARER_TOKEN;
         var response;
-        response = await fetch(host +'/graphql', {
+        response = await fetch(host + '/graphql', {
           method: 'POST',
           mode: 'cors',
           headers: {
             "Content-Type": "application/json",
             'Content-Length': data.length,
-            Authorization: 'Bearer '+ bearer,
+            Authorization: 'Bearer ' + bearer,
             'Origin': '$BaseURL',
           },
           body: data,

@@ -120,8 +120,6 @@ import RefreshIcon from '../../components/RefreshIcon.vue';
 import Cart from '../../components/Cart.vue';
 import PaymentArea from '../../components/PaymentArea.vue';
 
-
-
 if (process.client) {
   AdyenCheckout = require("@adyen/adyen-web");
 }
@@ -138,9 +136,6 @@ export default {
   },
   data() {
     return {
-      url: "",
-      bearer: "",
-      clientKey: "test_Y6ET72GBOBFGXFVJCPAHJTQU4MVGZDSR",
       cartId: '',
       redirectResult: '',
       checkout: '',
@@ -199,8 +194,7 @@ export default {
 
   methods: {
     storage() {
-      this.url = localStorage.getItem('url');
-      this.bearer = localStorage.getItem('bearer');
+
       this.cartId = localStorage.getItem('cart');
       this.cartItems = JSON.parse(localStorage.getItem('cartItems'));
 
@@ -356,7 +350,7 @@ export default {
 
       let configuration = {
         environment: 'test',
-        clientKey: this.clientKey,
+        clientKey: process.env.ADYEN_CLIENT_KEY,
         countryCode: this.shopperBillingAddress.country_code,
         paymentMethodsResponse: this.paymentMethodsResponse,
         onPaymentCompleted: (result, component) => {
@@ -702,8 +696,8 @@ export default {
     // Function to send any query to graphql endpoint of the host
     async sendGraphQLReq(data) {
       try {
-        const host = this.url;
-        const bearer = this.bearer;
+        const host = process.env.BASE_URL;
+        const bearer = process.env.BEARER_TOKEN;
         var response;
         response = await fetch(host +'/graphql', {
           method: 'POST',
@@ -712,7 +706,7 @@ export default {
             "Content-Type": "application/json",
             'Content-Length': data.length,
             Authorization: 'Bearer '+ bearer,
-            'Origin': 'https://8080-adyenexampl-adyenvueonl-wumtblawveo.ws-eu96.gitpod.io',
+            'Origin': host,
           },
           body: data,
         })

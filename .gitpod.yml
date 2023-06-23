@@ -26,9 +26,15 @@ tasks:
           "vue-frontend")
             # Check if environment variables are set in https://gitpod.io/variables.
             echo "Checking if environment variables are set ..."
-            if [ -z ${ADYEN_HMAC_KEY+x} ] || [[ -z ${ADYEN_API_KEY+x} ]] || [[ -z ${ADYEN_CLIENT_KEY+x} ]] || [[ -z ${ADYEN_MERCHANT_ACCOUNT+x} ]]; then
-              echo "Expected environment variables not found. Please set the ADYEN_HMAC_KEY, ADYEN_API_KEY, ADYEN_CLIENT_KEY, ADYEN_MERCHANT_ACCOUNT environment variables and rerun session https://gitpod.io/variables."
+            if [ -z ${BASE_URL+x} ] || [[ -z ${BEARER_TOKEN+x} ]] || [[ -z ${ADYEN_CLIENT_KEY+x} ]]; then
+              echo "Expected environment variables not found. Please set the BEARER_TOKEN, BASE_URL, ADYEN_CLIENT_KEY environment variables and rerun session https://gitpod.io/variables."
               exit 1
+            else
+              echo "I AM HERE"
+              cp .env.example .env
+              sed -i~ "s|.*BASE_URL=*|BASE_URL=$BASE_URL|" .env
+              sed -i~ "s|.*BEARER_TOKEN=*|BEARER_TOKEN=$BEARER_TOKEN|" .env
+              sed -i~ "s|.*CLIENT_KEY=*|ADYEN_CLIENT_KEY=$ADYEN_CLIENT_KEY|" .env
             fi
 
             # Run the application based on specified $path.
