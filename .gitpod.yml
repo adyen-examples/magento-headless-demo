@@ -26,8 +26,8 @@ tasks:
           "vue-frontend")
             # Check if environment variables are set in https://gitpod.io/variables.
             echo "Checking if environment variables are set ..."
-            if [ -z ${baseUrl+x} ] || [[ -z ${bearerToken+x} ]] || [[ -z ${ADYEN_CLIENT_KEY+x} ]]; then
-              echo "Expected environment variables not found. Please set the bearerToken, baseUrl, ADYEN_CLIENT_KEY environment variables and rerun session https://gitpod.io/variables."
+            if [ -z ${BASE_URL+x} ] || [[ -z ${BEARER_TOKEN+x} ]] || [[ -z ${ADYEN_CLIENT_KEY+x} ]]; then
+              echo "Expected environment variables not found. Please set the BEARER_TOKEN, BASE_URL, ADYEN_CLIENT_KEY environment variables and rerun session https://gitpod.io/variables."
               exit 1
             else
               echo "I AM HERE"
