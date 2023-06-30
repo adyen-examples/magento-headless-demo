@@ -8,6 +8,7 @@ Before getting started, make sure you have the following:
 
 - Github account (if you want to use Gitpod as your development environment)
 - Prior knowlege of how to spin up the [Magento Plugin Demo](https://github.com/adyen-examples/adyen-magento-plugin-demo)
+- Prior knowledge of how to spin up the [Vue Online Payment Demo](https://github.com/adyen-examples/adyen-vue-online-payments)
 
 ## Getting Started
 

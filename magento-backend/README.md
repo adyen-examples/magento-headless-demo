@@ -6,6 +6,8 @@
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/adyen-examples/magento-headless-demo/tree/develop/magento-backend)
 
 
-2. Open a new Terminal in the current directory and run `./install.sh` to install and configure the Adyen payment plugin.
+2. Open a new Terminal, navigate to backend directory `cd magento-backend` and run `./install.sh` to install and configure the Adyen payment plugin.
+
+3. Proceed to [Backend (Magento) setup](https://github.com/adyen-examples/magento-headless-demo/tree/develop#backend-magento-setup) 
 
 > __Note__ This part of the integration is an extension of the [Magento Plugin Demo](https://github.com/adyen-examples/adyen-magento-plugin-demo). 
