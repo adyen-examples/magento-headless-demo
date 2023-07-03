@@ -6,9 +6,7 @@ This repository provides a demo for integrating Magento with Vue.js in a headles
 
 Before getting started, make sure you have the following:
 
-- Github account (if you want to use Gitpod as your development environment)
-- Prior knowledge of how to spin up the [Magento Plugin Demo](https://github.com/adyen-examples/adyen-magento-plugin-demo)
-- Prior knowledge of how to spin up the [Vue Online Payment Demo](https://github.com/adyen-examples/adyen-vue-online-payments)
+- Github account
 
 ## Getting Started
 
@@ -22,21 +20,19 @@ To get started with the Magento Headless integration with Vue.js in Gitpod, foll
  - Create variables `BASE_URL` and `BEARER_TOKEN`. Set `#` as placeholder. These values will be updated later. (Scope: `adyen-examples/*`).
  - Set `ADMIN_USERNAME` and `ADMIN_PASSWORD` in the Gitpod account variables as well. These will be used as your login credentials in the Magento admin dashboard. (Scope: `adyen-examples/*`).
  > __Note__ `ADMIN_PASSWORD` must contain alphanumeric characters (Magento requirement).
-3. Launch the backend [Magento instance](https://github.com/adyen-examples/magento-headless-demo/tree/develop/magento-backend)
-
 
 
 ### Backend (Magento) setup
-1. Login the admin dashboard using the `ADMIN_USERNAME` and `ADMIN_PASSWORD` created in the previous step and navigate to `System > Integrations > Add New Integration` to create a new integration token. 
-2. Set a `Name` and set `ADMIN_PASSWORD` as `Your Password`
-3. In the API option, under Resource Access, Select `Sales`, `Adyen`, `Cart` and save. These are the required resources for the frontend.
-4. Click on `Activate` then `Allow` to copy your `Access Token`. 
-5. Update  `BEARER_TOKEN` variable created in [Gitpod](https://gitpod.io/variables) with the copied token and save.
-6. Update `BASE_URL` with URL of the Magento Instance and save.
+1. Launch the backend [Magento instance](https://github.com/adyen-examples/magento-headless-demo/tree/develop/magento-backend)
+2. Login the admin dashboard using the `ADMIN_USERNAME` and `ADMIN_PASSWORD` created in the previous step and navigate to `System > Integrations > Add New Integration` to create a new integration token. 
+3. Set a `Name` and set `ADMIN_PASSWORD` as `Your Password`
+4. In the API option, under Resource Access, Select `Sales`, `Adyen`, `Cart` and save. These are the required resources for the frontend.
+5. Click on `Activate` then `Allow` to copy your `Access Token`. 
+6. Update  `BEARER_TOKEN` variable created in [Gitpod](https://gitpod.io/variables) with the copied token and save.
+7. Update `BASE_URL` with URL of the Magento Instance and save.
 
 
 ### Frontend setup
-
 1. Launch [Frontend](https://github.com/adyen-examples/magento-headless-demo/tree/develop/vue-frontend)
 2. In the Magento Dashbboard, navigate to `Stores > Configuration > Sales > Payment methods > Adyen payments > Configure > Advanced settings > Headless integration`, update `Payment Origin URL` with the URL of the frontend (Vue) instance and `Payment Return URL` with same URL plus `/result` then save.
 3. Refresh the frontend view to load data from backend
