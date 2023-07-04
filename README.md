@@ -23,7 +23,7 @@ To get started with the Magento Headless integration with Vue.js in Gitpod, foll
 
 
 ### Backend (Magento) setup
-1. Launch the backend [Magento instance](https://github.com/adyen-examples/magento-headless-demo/tree/develop/magento-backend)
+1. Launch the backend [Magento instance](https://github.com/carlosperales95/magento-headless-demo/tree/develop/magento-backend)
 2. Login the admin dashboard using the `ADMIN_USERNAME` and `ADMIN_PASSWORD` created in the previous step and navigate to `System > Integrations > Add New Integration` to create a new integration token. 
 3. Set a `Name` and set `ADMIN_PASSWORD` as `Your Password`
 4. In the API option, under Resource Access, Select `Sales`, `Adyen`, `Cart` and save. These are the required resources for the frontend.
@@ -33,7 +33,7 @@ To get started with the Magento Headless integration with Vue.js in Gitpod, foll
 
 
 ### Frontend setup
-1. Launch [Frontend](https://github.com/adyen-examples/magento-headless-demo/tree/develop/vue-frontend)
+1. Launch [Frontend](https://github.com/carlosperales95/magento-headless-demo/tree/develop/vue-frontend)
 2. In the Magento Dashbboard, navigate to `Stores > Configuration > Sales > Payment methods > Adyen payments > Configure > Advanced settings > Headless integration`, update `Payment Origin URL` with the URL of the frontend (Vue) instance and `Payment Return URL` with same URL plus `/result` then save.
 3. Refresh the frontend view to load data from backend
 
