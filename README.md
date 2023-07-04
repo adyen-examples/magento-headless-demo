@@ -16,10 +16,10 @@ To get started with the Magento Headless integration with Vue.js in Gitpod, foll
 1. Create your [Adyen Test API Credentials](https://docs.adyen.com/user-management/how-to-get-the-api-key).
 2. Environment variable (one-time setup).
  - Go to [Gitpod account variables](https://gitpod.io/variables)
- - Set the `ADYEN_API_KEY`, `ADYEN_CLIENT_KEY` and `ADYEN_MERCHANT_ACCOUNT` variables (Scope: `adyen-examples/*`).
- - Set the `PORT` variable to `8080`, which is used for the frontend (Vue.js) instance.
+ - Add and set the `ADYEN_API_KEY`, `ADYEN_CLIENT_KEY` and `ADYEN_MERCHANT_ACCOUNT` variables (scope: `adyen-examples/*`).
+ - Add and set the `PORT` variable to `8080` (scope: `adyen-examples/*`), which is used for the frontend (Vue.js) instance.
  - Create variables `BASE_URL` and `BEARER_TOKEN`. Set `#` as its placeholder (scope: `adyen-examples/*`). These values will be updated later after we've configured the backend.
- - Set `ADMIN_USERNAME` and `ADMIN_PASSWORD` in the Gitpod account variables as well. These will be used as your login credentials in the Magento admin dashboard. (Scope: `adyen-examples/*`).
+ - Add and set `ADMIN_USERNAME` and `ADMIN_PASSWORD` in the Gitpod account variables as well. These will be used as your login credentials in the Magento admin dashboard. (Scope: `adyen-examples/*`).
  > __Warning__ The `ADMIN_PASSWORD` **must** be at least 7 characters in length and must include at least one alphabetic and at least one numeric character (Magento requirement).
 
 
