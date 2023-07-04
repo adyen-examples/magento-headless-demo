@@ -30,7 +30,7 @@ tasks:
               echo "Expected environment variables not found. Please set the BEARER_TOKEN, BASE_URL, ADYEN_CLIENT_KEY environment variables and rerun session https://gitpod.io/variables."
               exit 1
             else
-              echo "I AM HERE"
+              echo "Environment Variables are set!"
               cp .env.example .env
               sed -i~ "s|.*BASE_URL=*|BASE_URL=$BASE_URL|" .env
               sed -i~ "s|.*BEARER_TOKEN=*|BEARER_TOKEN=$BEARER_TOKEN|" .env
