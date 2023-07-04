@@ -20,7 +20,7 @@ To get started with the Magento Headless integration with Vue.js in Gitpod, foll
  - Set the `PORT` variable to `8080`, which is used for the frontend (Vue.js) instance.
  - Create variables `BASE_URL` and `BEARER_TOKEN`. Set `#` as its placeholder (scope: `adyen-examples/*`). These values will be updated later after we've configured the backend.
  - Set `ADMIN_USERNAME` and `ADMIN_PASSWORD` in the Gitpod account variables as well. These will be used as your login credentials in the Magento admin dashboard. (Scope: `adyen-examples/*`).
- > __Note__ **Magento Requirement:** The `ADMIN_PASSWORD` **must** be at least 7 characters in length and must include at least one alphabetic and at least one numeric character.
+ > __Warning__ The `ADMIN_PASSWORD` **must** be at least 7 characters in length and must include at least one alphabetic and at least one numeric character (Magento requirement).
 
 
 ### Backend (Magento) setup
