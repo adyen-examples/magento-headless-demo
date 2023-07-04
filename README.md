@@ -49,7 +49,7 @@ To get started with the Magento Headless integration with Vue.js in Gitpod, foll
 
 2. In the Magento Dashbboard, navigate to `Stores` > `Configuration` > `Sales` > `Payment methods` > `Adyen payments` > `Configure` > `Advanced settings` > `Headless integration`.
 3. Update the `Payment Origin URL` with the URL of the frontend (Vue) instance (e.g. `https://8080-adyenexampl-magentohead-qtjz67kufbw.ws-eu101.gitpod.io/`).
-4. Update `Payment Return URL` with same URL, but append `/result` to the URL (e.g. `https://8080-adyenexampl-magentohead-qtjz67kufbw.ws-eu101.gitpod.io/result`) , then hit `Save Config`.
+4. Update the `Payment Return URL` with the URL of the frontend (Vue), append `/result` to the URL (e.g. `https://8080-adyenexampl-magentohead-qtjz67kufbw.ws-eu101.gitpod.io/result`) , then hit `Save Config`.
 5. Refresh the frontend view to load data from backend.
 
  > __Note__ To allow the Adyen Drop-In and Components to load, you have to add `https://*.gitpod.io` as allowed origin for your chosen set of [API Credentials](https://ca-test.adyen.com/ca/ca/config/api_credentials_new.shtml).
