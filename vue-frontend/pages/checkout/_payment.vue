@@ -119,6 +119,7 @@ import PencilIcon from '../../components/PencilIcon.vue';
 import RefreshIcon from '../../components/RefreshIcon.vue';
 import Cart from '../../components/Cart.vue';
 import PaymentArea from '../../components/PaymentArea.vue';
+import * as graphql from '../../plugins/graphql.js';
 
 if (process.client) {
   AdyenCheckout = require("@adyen/adyen-web");
@@ -459,7 +460,7 @@ export default {
           });
         }
 
-        const response = await this.sendGraphQLReq(data);
+        const response = await graphql.sendGraphQLReq(data);
         this.orderId = response.data.placeOrder.order.order_id;
         let paymentStatus = response.data.placeOrder.order.adyen_payment_status;
 
@@ -492,7 +493,7 @@ export default {
           variables: {cartId: cartId, payload: payload },
         });
 
-        const response = await this.sendGraphQLReq(data);
+        const response = await graphql.sendGraphQLReq(data);
 
         alert(response.data.adyenPaymentDetails.resultCode);
         this.processResult(response.data.adyenPaymentDetails);
@@ -516,7 +517,7 @@ export default {
           variables: {cartId: cartId, orderNumber: orderId },
         });
 
-        const response = await this.sendGraphQLReq(data);
+        const response = await graphql.sendGraphQLReq(data);
         this.adyenStatusResponse = response.data.adyenPaymentStatus.resultCode;
         return response;
 
@@ -537,7 +538,7 @@ export default {
             + '"' + ' }) {cart { email }}}',
         });
 
-        const response = await this.sendGraphQLReq(data);
+        const response = await graphql.sendGraphQLReq(data);
 
         return response;
 
@@ -577,7 +578,7 @@ export default {
             + `, save_in_address_book: false}}]}) {cart {shipping_addresses {firstname lastname company street city region {code label} postcode telephone available_shipping_methods { available amount {value currency } carrier_code carrier_title error_message method_code method_title } country { code label }}}}}`,
         });
 
-        const response = await this.sendGraphQLReq(data);
+        const response = await graphql.sendGraphQLReq(data);
         this.shippingMethods = response.data.setShippingAddressesOnCart.cart.shipping_addresses[0].available_shipping_methods;
         localStorage.setItem("shipMethods", JSON.stringify(this.shippingMethods));
 
@@ -616,7 +617,7 @@ export default {
             + ', save_in_address_book: false }, same_as_shipping: true }}) {cart {billing_address {firstname lastname company street city region { code label} postcode telephone country { code label }}} }}',
         });
 
-        const response = await this.sendGraphQLReq(data);
+        const response = await graphql.sendGraphQLReq(data);
         return response;
 
       } catch (error) {
@@ -641,7 +642,7 @@ export default {
             + `}]}) {cart { shipping_addresses { selected_shipping_method { carrier_code carrier_title method_code method_title amount { value currency }}}}}}`,
         });
 
-        const response = await this.sendGraphQLReq(data);
+        const response = await graphql.sendGraphQLReq(data);
         return response;
 
       } catch (error) {
@@ -660,7 +661,7 @@ export default {
           variables: {cartId: cartId},
         });
 
-        const response = await this.sendGraphQLReq(data);
+        const response = await graphql.sendGraphQLReq(data);
         this.paymentMethods = response.data.adyenPaymentMethods.paymentMethodsExtraDetails;
         this.paymentMethodsResponse = response.data.adyenPaymentMethods.paymentMethodsResponse;
 
@@ -684,35 +685,7 @@ export default {
             + `){ items { uid quantity product { name sku price_tiers { quantity final_price { value } discount { amount_off percent_off }}} prices { price { value }}} prices { discounts { label amount { value }} subtotal_excluding_tax { value } applied_taxes { label amount {value}}}}}`,
         });
 
-        const response = await this.sendGraphQLReq(data);
-        return response;
-
-      } catch (error) {
-        console.error(error);
-        alert("Error occurred. Look at console for details");
-      }
-    },
-
-    // Function to send any query to graphql endpoint of the host
-    async sendGraphQLReq(data) {
-      try {
-        const host = process.env.BASE_URL;
-        const bearer = process.env.BEARER_TOKEN;
-        var response;
-        response = await fetch(host +'/graphql', {
-          method: 'POST',
-          mode: 'cors',
-          headers: {
-            "Content-Type": "application/json",
-            'Content-Length': data.length,
-            Authorization: 'Bearer '+ bearer,
-            'Origin': host,
-          },
-          body: data,
-        })
-          .then((res) => res.json())
-          //.then((result) => console.log( result))
-          .then(result => response = result)
+        const response = await graphql.sendGraphQLReq(data);
         return response;
 
       } catch (error) {

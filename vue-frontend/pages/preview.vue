@@ -23,6 +23,7 @@
 <script>
 import Cart from '../components/Cart.vue';
 import StoreList from '../components/StoreList.vue';
+import * as graphql from '../plugins/graphql.js';
 
 export default {
   asyncData({route}) {
@@ -78,7 +79,7 @@ export default {
           query: `mutation{createEmptyCart}`,
         });
 
-        const response = await this.sendGraphQLReq(data);
+        const response = await graphql.sendGraphQLReq(data);
 
         this.cartId = response.data.createEmptyCart;
         return response;
@@ -96,7 +97,7 @@ export default {
           query: `{products( search: "Messenger" filter: { price: { to: "50" } } pageSize: 25 sort: { price: DESC }) { items { name sku image { url label position disabled } price_range { minimum_price { regular_price { value currency } } }} total_count page_info { page_size }}}`,
         });
 
-        const response = await this.sendGraphQLReq(data);
+        const response = await graphql.sendGraphQLReq(data);
         this.items = response.data.products.items;
         // this.logStatus();
 
@@ -123,7 +124,7 @@ export default {
             + `] ) {  cart {  items { id product { name  sku image { url label position disabled } price_range { minimum_price { regular_price { value currency } } } } quantity } prices { grand_total { value currency } }  } } }`,
         });
 
-        const response = await this.sendGraphQLReq(data);
+        const response = await graphql.sendGraphQLReq(data);
         this.cartItems = response.data.addProductsToCart.cart.items;
         this.cartTotal = response.data.addProductsToCart.cart.prices.grand_total.value + " " + response.data.addProductsToCart.cart.prices.grand_total.currency;
         localStorage.setItem('cartItems', JSON.stringify(this.cartItems));
@@ -151,7 +152,7 @@ export default {
             + ` }) {  cart {  items { id product { name  sku image { url label position disabled } price_range { minimum_price { regular_price { value currency } } } } quantity } prices { grand_total { value currency } }  } } }`,
         });
 
-        const response = await this.sendGraphQLReq(data);
+        const response = await graphql.sendGraphQLReq(data);
         this.cartItems = response.data.removeItemFromCart.cart.items;
         localStorage.setItem('cartItems', JSON.stringify(this.cartItems));
         return response;
@@ -159,33 +160,6 @@ export default {
       } catch (error) {
         console.error(error);
         // alert("Error occurred. Look at console for details");
-      }
-    },
-
-    async sendGraphQLReq(data) {
-      try {
-        const host = process.env.BASE_URL;
-        const bearer = process.env.BEARER_TOKEN;
-        var response;
-        response = await fetch(host + '/graphql', {
-          method: 'POST',
-          mode: 'cors',
-          headers: {
-            "Content-Type": "application/json",
-            'Content-Length': data.length,
-            Authorization: 'Bearer ' + bearer,
-            'Origin': '$BaseURL',
-          },
-          body: data,
-        })
-          .then((res) => res.json())
-          //.then((result) => console.log( result))
-          .then(result => response = result)
-        return response;
-
-      } catch (error) {
-        console.error(error);
-        alert("Error occurred. Look at console for details");
       }
     },
 
