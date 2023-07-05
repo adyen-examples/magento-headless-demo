@@ -30,7 +30,7 @@ export default {
     return {type: route.query.type};
   },
   head: {
-    title: "Cart preview",
+    title: "Buy items",
   },
   components: {
     Cart,
@@ -72,6 +72,14 @@ export default {
       }
     },
 
+    updateCart(responseObj){
+      this.cartItems = responseObj.cart.items;
+      this.cartTotal = responseObj.cart.prices.grand_total.value + " " + responseObj.cart.prices.grand_total.currency;
+
+      localStorage.setItem('cartItems', JSON.stringify(this.cartItems));
+      localStorage.setItem('cartTotal', JSON.stringify(this.cartTotal));
+    },
+
     async getCartId() {
       try {
         // Create cart data
@@ -99,7 +107,6 @@ export default {
 
         const response = await graphql.sendGraphQLReq(data);
         this.items = response.data.products.items;
-        // this.logStatus();
 
         return response;
 
@@ -114,21 +121,10 @@ export default {
         const cartId = this.cartId;
         const sku = item.sku;
         const quantity = 1;
-        const products = '{ quantity:' + quantity + ' sku:' + '"' + sku + '"' + '}';
 
-        // Add items to cart
-        const data = JSON.stringify({
-          query: `mutation{ addProductsToCart( cartId: `
-            + '"' + cartId + '"'
-            + ` cartItems: [` + products
-            + `] ) {  cart {  items { id product { name  sku image { url label position disabled } price_range { minimum_price { regular_price { value currency } } } } quantity } prices { grand_total { value currency } }  } } }`,
-        });
 
-        const response = await graphql.sendGraphQLReq(data);
-        this.cartItems = response.data.addProductsToCart.cart.items;
-        this.cartTotal = response.data.addProductsToCart.cart.prices.grand_total.value + " " + response.data.addProductsToCart.cart.prices.grand_total.currency;
-        localStorage.setItem('cartItems', JSON.stringify(this.cartItems));
-        localStorage.setItem('cartTotal', JSON.stringify(this.cartTotal));
+        const response = await graphql.addProductsToCart(cartId, sku, quantity);
+        this.updateCart(response);
 
         return response;
 
@@ -143,18 +139,9 @@ export default {
         const cartId = this.cartId;
         const productId = item;
 
-        // Add items to cart
-        const data = JSON.stringify({
-          query: `mutation{ removeItemFromCart( input: { cart_id: `
-            + '"' + cartId + '"'
-            + `, cart_item_id: `
-            + '"' + productId + '"'
-            + ` }) {  cart {  items { id product { name  sku image { url label position disabled } price_range { minimum_price { regular_price { value currency } } } } quantity } prices { grand_total { value currency } }  } } }`,
-        });
+        const response = await graphql.removeItemFromCart(cartId, productId);
+        this.updateCart(response);
 
-        const response = await graphql.sendGraphQLReq(data);
-        this.cartItems = response.data.removeItemFromCart.cart.items;
-        localStorage.setItem('cartItems', JSON.stringify(this.cartItems));
         return response;
 
       } catch (error) {
@@ -164,5 +151,6 @@ export default {
     },
 
   },
+
 };
 </script>
