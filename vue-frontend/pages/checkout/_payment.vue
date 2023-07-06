@@ -39,21 +39,11 @@
                 <PencilIcon/>
               </div>
             </div>
-            <form v-if="shopperShippingAddress.street == ''">
-              <label for="fstreet">Street:</label>
-              <label for="fpostcode">Postcode</label><br>
-              <input type="text" id="fstreet" name="fstreet">
-              <input type="text" id="fpostcode" name="fpostcode"><br>
-              <label for="fcity">City:</label>
-              <label for="fregion">Region</label><br>
-              <input type="text" id="fcity" name="fcity">
-              <input type="text" id="fregion" name="fregion"><br>
-              <label for="fcountry">Country</label>
-              <label for="samebilling" id="checkbox-label">Same as Billing</label>
-              <input type="checkbox" id="samebilling" name="samebilling"><br>
-              <input type="text" id="fcountry" name="fcountry"><br>
-              <button type='button' @click="setFormShippingAddress()">Submit</button>
-            </form>
+            <AddressForm
+              v-bind:isAddressSet="showShippingForm"
+              v-bind:canSameBilling="true"
+              @send-form="setFormShippingAddress"
+            />
           </div>
           <div class="form-billing-data">
             <div class="form-header">
@@ -66,19 +56,11 @@
                 <PencilIcon/>
               </div>
             </div>
-            <form v-if="shopperBillingAddress.street == ''">
-              <label for="fbstreet">Street:</label>
-              <label for="fbpostcode">Postcode</label><br>
-              <input type="text" id="fbstreet" name="fstreet">
-              <input type="text" id="fbpostcode" name="fpostcode"><br>
-              <label for="fbcity">City:</label>
-              <label for="fbregion">Region</label><br>
-              <input type="text" id="fbcity" name="fbcity">
-              <input type="text" id="fbregion" name="fbregion"><br>
-              <label for="fbcountry">Country</label><br>
-              <input type="text" id="fbcountry" name="fbcountry"><br>
-              <button type='button' @click="setFormBillingAddress()">Submit</button>
-            </form>
+            <AddressForm
+              v-bind:isAddressSet="showBillingForm"
+              v-bind:canSameBilling="false"
+              @send-form="setFormBillingAddress"
+            />
           </div>
           <div class="shipping-method-selector">
             <div class="form-header">
@@ -120,6 +102,7 @@ import '@adyen/adyen-web/dist/adyen.css';
 import PencilIcon from '../../components/PencilIcon.vue';
 import RefreshIcon from '../../components/RefreshIcon.vue';
 import Cart from '../../components/Cart.vue';
+import AddressForm from '../../components/AddressForm.vue';
 import PaymentArea from '../../components/PaymentArea.vue';
 // Helpers
 import * as graphql from '../../plugins/graphql.js';
@@ -133,6 +116,7 @@ export default {
     RefreshIcon,
     Cart,
     PaymentArea,
+    AddressForm,
   },
   props: {
 
@@ -151,6 +135,9 @@ export default {
       cartItems:[],
       cartTotal: '',
       stateData:'',
+      showShopperForm: true,
+      showShippingForm: true,
+      showBillingForm: true,
       shopperBillingAddress: {
         firstName: '',
         lastName: '',
@@ -298,51 +285,53 @@ export default {
     },
 
     // Save ShippingAddress form locally and set it on cart
-    async setFormShippingAddress() {
-      this.shopperShippingAddress.street =  document.getElementById('fstreet').value;
-      this.shopperShippingAddress.postcode = document.getElementById('fpostcode').value;
-      this.shopperShippingAddress.city = document.getElementById('fcity').value;
-      this.shopperShippingAddress.region = document.getElementById('fregion').value;
-      this.shopperShippingAddress.country_code = document.getElementById('fcountry').value;
-      let sameBilling = document.getElementById('samebilling').checked;
+    async setFormShippingAddress(address) {
+      this.shopperShippingAddress.street =  address.street;
+      this.shopperShippingAddress.postcode = address.postcode;
+      this.shopperShippingAddress.city = address.city;
+      this.shopperShippingAddress.region = address.region;
+      this.shopperShippingAddress.country_code = address.country_code;
+      // let sameBilling = document.getElementById('samebilling').checked;
+      console.log(address);
 
-      let response = await this.setShippingAdress();
+      const response = await this.setShippingAdress();
 
       if(response.cart){
-        if(sameBilling) {
+        if(address.samebilling) {
           this.shopperBillingAddress.street =  this.shopperShippingAddress.street;
           this.shopperBillingAddress.postcode = this.shopperShippingAddress.postcode;
           this.shopperBillingAddress.city = this.shopperShippingAddress.city;
           this.shopperBillingAddress.region = this.shopperShippingAddress.region;
           this.shopperBillingAddress.country_code = this.shopperShippingAddress.country_code;
 
-          let response = await this.setBillingAddress();
-
-          if(response.cart) {
-            //document.getElementsByClassName("form-billing-data")[0].classList.add("collapsed");
+          const responseSecond = await this.setBillingAddress();
+          if(responseSecond.cart) {
             localStorage.setItem("billing", JSON.stringify(this.shopperBillingAddress));
+            this.showBillingForm = false;
           }
-          //document.getElementsByClassName("form-shipping-data")[0].classList.add("collapsed");
         }
         else {
-          document.getElementsByClassName("form-billing-data")[0].classList.remove("collapsed");
+          this.showBillingForm = true;
         }
+
         localStorage.setItem("shipping", JSON.stringify(this.shopperShippingAddress));
+        this.showShippingForm = false;
       }
     },
 
     // Save ShippingAddress form locally and set it on cart
-    async setFormBillingAddress() {
-      this.shopperBillingAddress.street =  document.getElementById('fbstreet').value;
-      this.shopperBillingAddress.postcode = document.getElementById('fbpostcode').value;
-      this.shopperBillingAddress.city = document.getElementById('fbcity').value;
-      this.shopperBillingAddress.region = document.getElementById('fbregion').value;
-      this.shopperBillingAddress.country_code = document.getElementById('fbcountry').value;
+    async setFormBillingAddress(address) {
+      this.shopperBillingAddress.street =  address.street;
+      this.shopperBillingAddress.postcode = address.postcode;
+      this.shopperBillingAddress.city = address.city;
+      this.shopperBillingAddress.region = address.region;
+      this.shopperBillingAddress.country_code = address.country_code;
 
       let response = await this.setBillingAddress();
 
       if(response.cart){
-        document.getElementsByClassName("form-billing-data")[0].classList.add("collapsed");
+        //document.getElementsByClassName("form-billing-data")[0].classList.add("collapsed");
+        this.showBillingForm = false;
         localStorage.setItem("billing", JSON.stringify(this.shopperBillingAddress));
       }
     },
@@ -541,6 +530,8 @@ export default {
 
         //set shippingmethod
         const response = await graphql.setShippingMethodsOnCart(cartId, method);
+        const carty = await graphql.queryCart(cartId);
+        console.log(carty);
         return response;
 
       } catch (error) {

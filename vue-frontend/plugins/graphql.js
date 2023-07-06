@@ -28,7 +28,9 @@ export async function sendGraphQLReq(data) {
 export async function getCartId() {
   try {
     const data = JSON.stringify({
-      query: `mutation{createEmptyCart}`,
+      query: `mutation {
+        createEmptyCart
+      }`,
     });
 
     const response = await this.sendGraphQLReq(data);
@@ -42,9 +44,100 @@ export async function getCartId() {
 export async function queryCart(cartId) {
   try {
     const data = JSON.stringify({
-      query: `{cart(cart_id: `
-        + `"` + cartId + `"`
-        + `){ items { uid quantity product { name sku price_tiers { quantity final_price { value } discount { amount_off percent_off }}} prices { price { value }}} prices { discounts { label amount { value }} subtotal_excluding_tax { value } applied_taxes { label amount {value}}}}}`,
+      query: `{cart(cart_id: ` + `"` + cartId + `"` + `){
+        shipping_addresses {
+          firstname
+          lastname
+          street
+          city
+          region {
+            code
+            label
+          }
+          country {
+            code
+            label
+          }
+          telephone
+          available_shipping_methods {
+            amount {
+              currency
+              value
+            }
+            available
+            carrier_code
+            carrier_title
+            error_message
+            method_code
+            method_title
+            price_excl_tax {
+              value
+              currency
+            }
+            price_incl_tax {
+              value
+              currency
+            }
+          }
+          selected_shipping_method {
+            amount {
+              value
+              currency
+            }
+            carrier_code
+            carrier_title
+            method_code
+            method_title
+          }
+        }
+        items {
+          uid
+          quantity
+          product {
+            name
+            sku
+            price_tiers {
+              quantity
+              final_price {
+                value
+              }
+              discount {
+                amount_off
+                percent_off
+              }
+            }
+          }
+          prices {
+            price {
+              value
+            }
+          }
+        }
+        prices {
+          discounts {
+            label
+            amount {
+              value
+            }
+          }
+          subtotal_excluding_tax {
+            value
+          }
+          applied_taxes {
+            label
+            amount {
+              value
+            }
+          }
+        }
+        prices {
+          grand_total {
+            value
+            currency
+          }
+        }
+      }
+    }`,
     });
     const response = await this.sendGraphQLReq(data);
     return response;
@@ -57,7 +150,42 @@ export async function queryCart(cartId) {
 export async function searchProducts(searchString) {
   try {
     const data = JSON.stringify({
-      query: `{products( search: ` + searchString + ` filter: { price: { to: "50" } } pageSize: 25 sort: { price: DESC }) { items { name sku image { url label position disabled } price_range { minimum_price { regular_price { value currency } } }} total_count page_info { page_size }}}`,
+      query: `{
+        products(
+          search: ` + searchString + `
+          filter: {
+            price: {
+              to: "50"
+            }
+          }
+          pageSize: 25
+          sort: {
+            price: DESC
+          }) {
+            items {
+              name
+              sku
+              image {
+                url
+                label
+                position
+                disabled
+              }
+              price_range {
+                minimum_price {
+                  regular_price {
+                    value
+                    currency
+                  }
+                }
+              }
+            }
+            total_count page_info
+            {
+              page_size
+            }
+          }
+        }`,
     });
 
     const response = await this.sendGraphQLReq(data);
@@ -71,12 +199,43 @@ export async function searchProducts(searchString) {
 export async function addProductsToCart(cartId, sku, quantity) {
   try {
     const products = '{ quantity:' + quantity + ' sku:' + '"' + sku + '"' + '}';
+
     // Add items to cart
     const data = JSON.stringify({
-      query: `mutation{ addProductsToCart( cartId: `
-        + '"' + cartId + '"'
-        + ` cartItems: [` + products
-        + `] ) {  cart {  items { id product { name  sku image { url label position disabled } price_range { minimum_price { regular_price { value currency } } } } quantity } prices { grand_total { value currency } }  } } }`,
+      query: `mutation {
+        addProductsToCart( cartId: `+ '"' + cartId + '"' + ` cartItems: [` + products + `] ) {
+          cart {
+            items {
+              id
+              product {
+                name
+                sku
+                image {
+                  url
+                  label
+                  position
+                  disabled
+                }
+                price_range {
+                  minimum_price {
+                    regular_price {
+                      value
+                      currency
+                    }
+                  }
+                }
+              }
+              quantity
+            }
+            prices {
+              grand_total {
+                value
+                currency
+              }
+            }
+          }
+        }
+      }`,
     });
     const response = await this.sendGraphQLReq(data);
     return response.data.addProductsToCart;
