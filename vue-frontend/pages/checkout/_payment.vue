@@ -459,25 +459,17 @@ export default {
     async adyenDetails(state, component) {
       try {
         const cartId = this.cartId;
-        let orderId = this.orderId;
-
+        const orderId = this.orderId;
         let payload = state.data;
         payload.orderId = orderId;
         payload = JSON.stringify(payload);
 
-        const data = JSON.stringify({
-          query: `mutation getAdyenPaymentDetails($payload: String!, $cartId: String!) {adyenPaymentDetails(payload: $payload, cart_id: $cartId) {isFinal resultCode additionalData action}}`,
-          variables: {cartId: cartId, payload: payload },
-        });
-
-        const response = await graphql.sendGraphQLReq(data);
-
+        // RESPONSE STRUCT: { "adyenPaymentDetails": { "isFinal": true, "resultCode": "Authorised", "additionalData": null, "action": null } }
+        const response = graphql.getAdyenPaymentDetails(cartId, payload);
         alert(response.data.adyenPaymentDetails.resultCode);
         this.processResult(response.data.adyenPaymentDetails);
-        // { "adyenPaymentDetails": { "isFinal": true, "resultCode": "Authorised", "additionalData": null, "action": null } }
 
         return response;
-
       } catch (error) {
         this.handlePaymentError(error);
       }
@@ -489,13 +481,8 @@ export default {
         const cartId = this.cartId;
         const orderId = this.orderId;
 
-        const data = JSON.stringify({
-          query: `query getAdyenPaymentStatus($orderNumber: String!, $cartId: String!) { adyenPaymentStatus(orderNumber: $orderNumber, cartId: $cartId) { isFinal resultCode additionalData action}}`,
-          variables: {cartId: cartId, orderNumber: orderId },
-        });
-
-        const response = await graphql.sendGraphQLReq(data);
-        this.adyenStatusResponse = response.data.adyenPaymentStatus.resultCode;
+        const response = graphql.getAdyenPaymentStatus(cartId, orderId);
+        this.adyenStatusResponse  = response;
         return response;
 
       } catch (error) {
@@ -507,13 +494,11 @@ export default {
     async addGuestToCart(shopperEmail) {
       try {
         const cartId = this.cartId;
-
         const response = await graphql.setGuestEmailOnCart(cartId, shopperEmail);
         return response;
 
       } catch (error) {
         console.error(error);
-        alert("Error occurred. Look at console for details");
       }
     },
 
@@ -529,7 +514,6 @@ export default {
 
       } catch (error) {
         console.error(error);
-        alert("Error occurred. Look at console for details");
       }
     },
 
@@ -542,7 +526,6 @@ export default {
 
       } catch (error) {
         console.error(error);
-        alert("Error occurred. Look at console for details");
       }
     },
 
@@ -557,7 +540,6 @@ export default {
 
       } catch (error) {
         console.error(error);
-        alert("Error occurred. Look at console for details");
       }
     },
 
@@ -575,27 +557,17 @@ export default {
 
       } catch (error) {
         console.error(error);
-        alert("Error occurred. Look at console for details");
       }
     },
 
     async queryCart() {
       try {
         const cartId = this.cartId;
-
-        //set shippingmethod
-        const data = JSON.stringify({
-          query: `{cart(cart_id: `
-            + `"` + cartId + `"`
-            + `){ items { uid quantity product { name sku price_tiers { quantity final_price { value } discount { amount_off percent_off }}} prices { price { value }}} prices { discounts { label amount { value }} subtotal_excluding_tax { value } applied_taxes { label amount {value}}}}}`,
-        });
-
-        const response = await graphql.sendGraphQLReq(data);
+        const response = await graphql.queryCart(data);
         return response;
 
       } catch (error) {
         console.error(error);
-        alert("Error occurred. Look at console for details");
       }
     },
 

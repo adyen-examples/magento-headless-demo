@@ -25,6 +25,49 @@ export async function sendGraphQLReq(data) {
   }
 }
 
+export async function getCartId() {
+  try {
+    const data = JSON.stringify({
+      query: `mutation{createEmptyCart}`,
+    });
+
+    const response = await this.sendGraphQLReq(data);
+    return response.data.createEmptyCart;
+
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function queryCart(cartId) {
+  try {
+    const data = JSON.stringify({
+      query: `{cart(cart_id: `
+        + `"` + cartId + `"`
+        + `){ items { uid quantity product { name sku price_tiers { quantity final_price { value } discount { amount_off percent_off }}} prices { price { value }}} prices { discounts { label amount { value }} subtotal_excluding_tax { value } applied_taxes { label amount {value}}}}}`,
+    });
+    const response = await this.sendGraphQLReq(data);
+    return response;
+
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function searchProducts(searchString) {
+  try {
+    const data = JSON.stringify({
+      query: `{products( search: ` + searchString + ` filter: { price: { to: "50" } } pageSize: 25 sort: { price: DESC }) { items { name sku image { url label position disabled } price_range { minimum_price { regular_price { value currency } } }} total_count page_info { page_size }}}`,
+    });
+
+    const response = await this.sendGraphQLReq(data);
+    return response.data.products.items;
+
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 export async function addProductsToCart(cartId, sku, quantity) {
   try {
     const products = '{ quantity:' + quantity + ' sku:' + '"' + sku + '"' + '}';
@@ -205,5 +248,35 @@ export async function setPaymentMethodAndPlaceOrder(cartId, stateData) {
 
   } catch(error){
     console.error(error);
+  }
+}
+
+export async function getAdyenPaymentStatus(cartId, orderId) {
+  try {
+    const data = JSON.stringify({
+      query: `query getAdyenPaymentStatus($orderNumber: String!, $cartId: String!) { adyenPaymentStatus(orderNumber: $orderNumber, cartId: $cartId) { isFinal resultCode additionalData action}}`,
+      variables: {cartId: cartId, orderNumber: orderId },
+    });
+
+    const response = await this.sendGraphQLReq(data);
+    return response.data.adyenPaymentStatus.resultCode;
+
+  } catch (errror) {
+    console.log(error);
+  }
+}
+
+export async function getAdyenPaymentDetails(cartId, payload) {
+  try {
+    const data = JSON.stringify({
+      query: `mutation getAdyenPaymentDetails($payload: String!, $cartId: String!) {adyenPaymentDetails(payload: $payload, cart_id: $cartId) {isFinal resultCode additionalData action}}`,
+      variables: {cartId: cartId, payload: payload },
+    });
+
+    const response = await graphql.sendGraphQLReq(data);
+    return response;
+
+  } catch (error) {
+    console.log(error);
   }
 }

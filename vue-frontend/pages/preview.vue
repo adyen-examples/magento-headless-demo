@@ -4,16 +4,16 @@
       <div class="margin-container">
       </div>
       <StoreList
-        v-bind:items="items"
-        @add-item="addItemToCart"
+        v-bind:items="storeItems"
+        @add-item="addItem"
       />
       <div class="summary-column">
         <Cart
           v-bind:cartItems="cartItems"
           v-bind:cartTotal="cartTotal"
           v-bind:cartActions="true"
-          @add-item="addItemToCart"
-          @remove-item="removeItemFromCart"
+          @add-item="addItem"
+          @remove-item="deleteItem"
         />
       </div>
     </section>
@@ -39,7 +39,7 @@ export default {
   data() {
     return {
       cartId: '',
-      items: [],
+      storeItems: [],
       cartItems: [],
       cartTotal: "0 EUR",
     }
@@ -82,59 +82,44 @@ export default {
 
     async getCartId() {
       try {
-        // Create cart data
-        const data = JSON.stringify({
-          query: `mutation{createEmptyCart}`,
-        });
-
-        const response = await graphql.sendGraphQLReq(data);
-
-        this.cartId = response.data.createEmptyCart;
+        const response = await graphql.getCartId();
+        this.cartId = response;
         return response;
 
       } catch (error) {
         console.error(error);
-        alert("Error occurred. Look at console for details");
       }
     },
 
     async listStoreItems() {
       try {
-
-        const data = JSON.stringify({
-          query: `{products( search: "Messenger" filter: { price: { to: "50" } } pageSize: 25 sort: { price: DESC }) { items { name sku image { url label position disabled } price_range { minimum_price { regular_price { value currency } } }} total_count page_info { page_size }}}`,
-        });
-
-        const response = await graphql.sendGraphQLReq(data);
-        this.items = response.data.products.items;
+        const queryString = "Messenger";
+        const response = await graphql.searchProducts(queryString);
+        this.storeItems = response;
 
         return response;
 
       } catch (error) {
         console.error(error);
-        alert("Error occurred. Look at console for details");
       }
     },
 
-    async addItemToCart(item) {
+    async addItem(item) {
       try {
         const cartId = this.cartId;
         const sku = item.sku;
         const quantity = 1;
 
-
         const response = await graphql.addProductsToCart(cartId, sku, quantity);
         this.updateCart(response);
-
         return response;
 
       } catch (error) {
         console.error(error);
-        // alert("Error occurred. Look at console for details");
       }
     },
 
-    async removeItemFromCart(item) {
+    async deleteItem(item) {
       try {
         const cartId = this.cartId;
         const productId = item;
@@ -146,7 +131,6 @@ export default {
 
       } catch (error) {
         console.error(error);
-        // alert("Error occurred. Look at console for details");
       }
     },
 
