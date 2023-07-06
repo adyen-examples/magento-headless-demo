@@ -64,7 +64,7 @@
           </div>
           <div class="shipping-method-selector">
             <div class="form-header">
-              <h2> Shipping Method Address </h2>
+              <h2> Shipping Method </h2>
               <div class="pencil-icon">
                 <RefreshIcon/>
               </div>
