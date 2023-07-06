@@ -26,9 +26,6 @@ import StoreList from '../components/StoreList.vue';
 import * as graphql from '../plugins/graphql.js';
 
 export default {
-  asyncData({route}) {
-    return {type: route.query.type};
-  },
   head: {
     title: "Buy items",
   },

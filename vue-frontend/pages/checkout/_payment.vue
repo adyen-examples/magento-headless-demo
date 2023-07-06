@@ -192,7 +192,6 @@ export default {
     this.redirectResult = urlParams.get('redirectResult');
 
     this.storage();
-    //this.queryCart();
   },
 
   methods: {
@@ -434,7 +433,13 @@ export default {
 
     },
 
-    // Query logic to place an order for an adyen payment
+    // GRAPHQL HANDLERS
+    /**
+     * Retrieves the cartId and state.data, calls graphql setPaymentMethodAndPlaceOrder and handles the response
+     * @param {object} state of the component
+     * @param {object} component in question
+     * @returns response from graphql
+     */
     async placeOrder(state, component) {
       try {
         const cartId = this.cartId;

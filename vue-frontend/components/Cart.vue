@@ -40,7 +40,7 @@
     <div class="cart-footer">
       <span class="cart-footer-label"> Total: </span>
       <span class="cart-footer-amount"> {{cartTotal}} </span>
-      <nuxt-link :to="`/checkout/${type}`" v-if="cartActions">
+      <nuxt-link :to="`/checkout/cart`" v-if="cartActions">
         <p class="button">Continue to checkout</p>
       </nuxt-link>
     </div>
@@ -49,9 +49,6 @@
 
 <script>
 export default {
-  asyncData({ route }) {
-    return { type: route.query.type };
-  },
   name: 'Cart',
   props: {
     cartItems: Array,
@@ -65,7 +62,6 @@ export default {
     removeFromCart(product){
       this.$emit('remove-item', product);
     },
-
   }
 }
 </script>
