@@ -24,7 +24,7 @@ export default {
       localDetails.firstName = document.getElementById('firstName').value;
       localDetails.lastName = document.getElementById('lastName').value;
       localDetails.email = document.getElementById('email').value;
-      localDetails.phone = document.getElementById('phoneNumber').value;
+      localDetails.telephone = document.getElementById('phoneNumber').value;
 
       this.$emit('send-form', localDetails);
     },

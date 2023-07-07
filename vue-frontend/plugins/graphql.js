@@ -358,7 +358,7 @@ export async function setShippingAddressesOnCart(cartId, shippingAddress) {
                   region:` + '"' + shippingAddress.region + '"' + `,
                   postcode:` + '"' + shippingAddress.postcode + '"' + `,
                   country_code:` + '"' + shippingAddress.country_code + '"' + `,
-                  telephone:` + '"' + shippingAddress.phone + '"' + `,
+                  telephone:` + '"' + shippingAddress.telephone + '"' + `,
                   save_in_address_book: false
                 }
               }
@@ -421,7 +421,7 @@ export async function setBillingAddressOnCart(cartId, billingAddress) {
                 region:` + '"' + billingAddress.region + '"' + `,
                 postcode:` + '"' + billingAddress.postcode + '"' + `,
                 country_code:` + '"' + billingAddress.country_code + '"' + `,
-                telephone:` + '"' + billingAddress.phone + '"' + `,
+                telephone:` + '"' + billingAddress.telephone + '"' + `,
                 save_in_address_book: false
               },
               same_as_shipping: true

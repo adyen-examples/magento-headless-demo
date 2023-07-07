@@ -10,7 +10,7 @@
               <h2> Your Details </h2>
               <div
                 class="pencil-icon"
-                v-if="shopperShippingAddress.firstName != ''"
+                v-if="showShopperForm"
                 v-on:click="onEditForm('shopper')"
               >
                 <PencilIcon/>
@@ -26,7 +26,7 @@
               <h2> Shipping Address </h2>
               <div
                 class="pencil-icon"
-                v-if="shopperShippingAddress.street != ''"
+                v-if="showShippingForm"
                 v-on:click="onEditForm('shipping')"
               >
                 <PencilIcon/>
@@ -43,7 +43,7 @@
               <h2> Billing Address </h2>
               <div
                 class="pencil-icon"
-                v-if="shopperBillingAddress.street != ''"
+                v-if="showBillingForm"
                 v-on:click="onEditForm('billing')"
               >
                 <PencilIcon/>
@@ -119,7 +119,6 @@ export default {
   data() {
     return {
       cartId: '',
-      redirectResult: '',
       checkout: '',
       selectedpm: '',
       selectedShippingMethod: '',
@@ -142,7 +141,7 @@ export default {
         region: '',
         postcode: '',
         country_code: '',
-        phone: '',
+        telephone: '',
       },
       shopperShippingAddress: {
         firstName: '',
@@ -152,7 +151,7 @@ export default {
         region: '',
         postcode: '',
         country_code: '',
-        phone: '',
+        telephone: '',
       },
     }
   },
@@ -170,7 +169,6 @@ export default {
   },
   async mounted() {
     const urlParams = new URLSearchParams(window.location.search);
-    this.redirectResult = urlParams.get('redirectResult');
 
     this.storage();
   },
@@ -183,11 +181,9 @@ export default {
 
       this.cartItems = response.cart.items;
       this.cartTotal = response.cart.prices.grand_total.value + " " + response.cart.prices.grand_total.currency;
-
       if(response.cart.email) {
         this.showShopperForm = false;
       }
-
       this.updateShipping(response);
       this.updateBilling(response);
 
@@ -198,7 +194,6 @@ export default {
     async onCheckBoxChange(event) {
       let method = this.shippingMethods[event.target.id.substring(event.target.id.indexOf('-') + 1)];
       let response = await this.setShippingMethod(method);
-
       await this.getPaymentMethods();
     },
 
@@ -211,7 +206,7 @@ export default {
         this.shopperShippingAddress.region = data.cart.shipping_addresses[0].region.label;
         this.shopperShippingAddress.postcode = data.cart.shipping_addresses[0].postcode;
         this.shopperShippingAddress.country_code = data.cart.shipping_addresses[0].country.code;
-        this.shopperShippingAddress.phone = data.cart.shipping_addresses[0].telephone;
+        this.shopperShippingAddress.telephone = data.cart.shipping_addresses[0].telephone;
         this.shippingMethods = data.cart.shipping_addresses[0].available_shipping_methods;
         this.showShippingForm = false;
         this.selected_shipping_method = data.cart.shipping_addresses[0].selected_shipping_method != null ? data.cart.shipping_addresses[0].selected_shipping_method : null;
@@ -227,7 +222,7 @@ export default {
         this.shopperBillingAddress.region = data.cart.billing_address.region.label;
         this.shopperBillingAddress.postcode = data.cart.billing_address.postcode;
         this.shopperBillingAddress.country_code = data.cart.billing_address.country.code;
-        this.shopperBillingAddress.phone = data.cart.billing_address.telephone;
+        this.shopperBillingAddress.telephone = data.cart.billing_address.telephone;
         this.showBillingForm = false;
       }
     },
@@ -237,11 +232,11 @@ export default {
         case "shopper":
           this.shopperShippingAddress.firstName = '';
           this.shopperShippingAddress.lastName = '';
-          this.shopperShippingAddress.phone = '';
+          this.shopperShippingAddress.telephone = '';
 
           this.shopperBillingAddress.firstName = '';
           this.shopperBillingAddress.lastName = '';
-          this.shopperBillingAddress.phone = '';
+          this.shopperBillingAddress.telephone = '';
           break;
         case "shipping":
           this.shopperShippingAddress.street = '';
@@ -258,7 +253,6 @@ export default {
           this.shopperBillingAddress.country_code = '';
           break;
       }
-
     },
 
     // Refreshing config when selecting new payment method from list
@@ -270,19 +264,16 @@ export default {
     //// FORMS
     // Save ShopperData form locally and set guest email
     async setFormShopperData(details) {
-
       let response = await this.addGuestToCart(details.email);
-
       this.shopperShippingAddress.firstName = details.firstName;
       this.shopperShippingAddress.lastName = details.lastName;
-      this.shopperShippingAddress.phone = details.phone;
+      this.shopperShippingAddress.telephone = details.telephone;
 
       this.shopperBillingAddress.firstName = details.firstName;
       this.shopperBillingAddress.lastName = details.lastName;
-      this.shopperBillingAddress.phone = details.phone;
+      this.shopperBillingAddress.telephone = details.telephone;
 
       if(response.data.setGuestEmailOnCart.cart){
-
         this.showShopperForm = false;
         this.showShippingForm = true;
       }
@@ -290,7 +281,9 @@ export default {
 
     // Save ShippingAddress form locally and set it on cart
     async setFormShippingAddress(address) {
-
+      address.firstName = this.shopperShippingAddress.firstName;
+      address.lastName = this.shopperShippingAddress.lastName;
+      address.telephone = this.shopperShippingAddress.telephone;
       const response = await this.setShippingAdress(address);
 
       if(response.cart){
@@ -303,21 +296,21 @@ export default {
         else {
           this.showBillingForm = true;
         }
-
         this.showShippingForm = false;
       }
     },
 
     // Save ShippingAddress form locally and set it on cart
     async setFormBillingAddress(address) {
+      address.firstName = this.shopperBillingAddress.firstName;
+      address.lastName = this.shopperBillingAddress.lastName;
+      address.telephone = this.shopperBillingAddress.telephone;
       this.shopperBillingAddress.street =  address.street;
       this.shopperBillingAddress.postcode = address.postcode;
       this.shopperBillingAddress.city = address.city;
       this.shopperBillingAddress.region = address.region;
       this.shopperBillingAddress.country_code = address.country_code;
-
-      let response = await this.setBillingAddress();
-
+      let response = await this.setBillingAddress(address);
       if(response.cart){
         this.showBillingForm = false;
       }

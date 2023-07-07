@@ -31,7 +31,7 @@ export default {
       localAddress.city = document.getElementById('city').value;
       localAddress.region = document.getElementById('region').value;
       localAddress.country_code = document.getElementById('country').value;
-      localAddress.samebilling = document.getElementById('samebilling').checked;
+      localAddress.samebilling = this.canSameBilling ? document.getElementById('samebilling').checked : null;
 
       this.$emit('send-form', localAddress);
     },

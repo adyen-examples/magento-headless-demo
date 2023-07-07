@@ -112,7 +112,6 @@ export default {
 
         const response = await graphql.removeItemFromCart(cartId, productId);
         this.updateCart(response);
-
         return response;
 
       } catch (error) {
