@@ -6,52 +6,25 @@
       <div id="payment-page" class="store-container">
         <div class="forms">
           <div class="form-shopper-data">
-            <div class="form-header">
-              <h2> Your Details </h2>
-              <div
-                class="pencil-icon"
-                v-if="showShopperForm"
-                v-on:click="onEditForm('shopper')"
-              >
-                <PencilIcon/>
-              </div>
-            </div>
             <DetailsForm
-              v-bind:isDetailsSet="showShopperForm"
+              :isDetailsSet="showShopperForm"
+              :title="'Your Details'"
               @send-form="setFormShopperData"
             />
           </div>
           <div class="form-shipping-data">
-            <div class="form-header">
-              <h2> Shipping Address </h2>
-              <div
-                class="pencil-icon"
-                v-if="showShippingForm"
-                v-on:click="onEditForm('shipping')"
-              >
-                <PencilIcon/>
-              </div>
-            </div>
             <AddressForm
-              v-bind:isAddressSet="showShippingForm"
-              v-bind:canSameBilling="true"
+              :isAddressSet="showShippingForm"
+              :canSameBilling="true"
+              :title="'Shipping Address'"
               @send-form="setFormShippingAddress"
             />
           </div>
           <div class="form-billing-data">
-            <div class="form-header">
-              <h2> Billing Address </h2>
-              <div
-                class="pencil-icon"
-                v-if="showBillingForm"
-                v-on:click="onEditForm('billing')"
-              >
-                <PencilIcon/>
-              </div>
-            </div>
             <AddressForm
-              v-bind:isAddressSet="showBillingForm"
-              v-bind:canSameBilling="false"
+              :isAddressSet="showBillingForm"
+              :canSameBilling="false"
+              :title="'Billing Address'"
               @send-form="setFormBillingAddress"
             />
           </div>

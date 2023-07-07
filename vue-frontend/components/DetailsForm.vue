@@ -1,22 +1,40 @@
 <template>
-  <form v-if="isDetailsSet">
-    <label for="firstName">First name:</label>
-    <label for="lastName">Last name:</label><br>
-    <input type="text" id="firstName" name="firstName">
-    <input type="text" id="lastName" name="lastName"><br>
-    <label for="email">Email:</label>
-    <label for="phoneNumber">Phone:</label><br>
-    <input type="text" id="email" name="email">
-    <input type="text" id="phoneNumber" name="phoneNumber"><br>
-    <button type='button' @click="sendDetailsForm()">Submit</button>
-  </form>
+  <div>
+    <div class="form-header">
+      <h2> {{title}}  </h2>
+      <div
+        class="pencil-icon"
+        v-if="!isDetailsSet"
+        v-on:click=""
+      >
+        <PencilIcon/>
+      </div>
+    </div>
+    <form v-if="isDetailsSet">
+      <label for="firstName">First name:</label>
+      <label for="lastName">Last name:</label><br>
+      <input type="text" id="firstName" name="firstName">
+      <input type="text" id="lastName" name="lastName"><br>
+      <label for="email">Email:</label>
+      <label for="phoneNumber">Phone:</label><br>
+      <input type="text" id="email" name="email">
+      <input type="text" id="phoneNumber" name="phoneNumber"><br>
+      <button type='button' @click="sendDetailsForm()">Submit</button>
+    </form>
+  </div>
 </template>
 
 <script>
+import PencilIcon from './PencilIcon.vue';
+
 export default {
-  name: 'AddressForm',
+  name: 'DetailsForm',
+  components: {
+    PencilIcon,
+  },
   props: {
     isDetailsSet: Boolean,
+    title: String,
   },
   methods: {
     sendDetailsForm() {
