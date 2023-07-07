@@ -4,14 +4,14 @@
       <div class="margin-container">
       </div>
       <StoreList
-        v-bind:items="storeItems"
+        :items="storeItems"
         @add-item="addItem"
       />
       <div class="summary-column">
         <Cart
-          v-bind:cartItems="cartItems"
-          v-bind:cartTotal="cartTotal"
-          v-bind:cartActions="true"
+          :cartItems="cartItems"
+          :cartTotal="cartTotal"
+          :cartActions="true"
           @add-item="addItem"
           @remove-item="deleteItem"
         />

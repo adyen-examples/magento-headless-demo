@@ -5,7 +5,7 @@
       <div
         class="pencil-icon"
         v-if="!isAddressSet"
-        v-on:click="onEditForm('shopper')"
+        v-on:click="onEdit()"
       >
         <PencilIcon/>
       </div>
@@ -40,6 +40,7 @@ export default {
     isAddressSet: Boolean,
     canSameBilling: Boolean,
     title: String,
+    type: String,
   },
   methods: {
     sendAddressForm() {
@@ -54,8 +55,7 @@ export default {
       this.$emit('send-form', localAddress);
     },
     onEdit() {
-      this.$emit('edit-form', "shopper");
-
+      this.$emit('edit-form', this.type);
     },
   }
 }

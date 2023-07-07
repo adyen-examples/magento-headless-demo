@@ -9,7 +9,9 @@
             <DetailsForm
               :isDetailsSet="showShopperForm"
               :title="'Your Details'"
+              :type="'shopper'"
               @send-form="setFormShopperData"
+              @edit-form="onEditForm"
             />
           </div>
           <div class="form-shipping-data">
@@ -17,7 +19,9 @@
               :isAddressSet="showShippingForm"
               :canSameBilling="true"
               :title="'Shipping Address'"
+              :type="'shipping'"
               @send-form="setFormShippingAddress"
+              @edit-form="onEditForm"
             />
           </div>
           <div class="form-billing-data">
@@ -25,7 +29,9 @@
               :isAddressSet="showBillingForm"
               :canSameBilling="false"
               :title="'Billing Address'"
+              :type="'billing'"
               @send-form="setFormBillingAddress"
+              @edit-form="onEditForm"
             />
           </div>
           <div class="shipping-method-selector">
@@ -44,16 +50,16 @@
       </div>
       <div class="summary-column">
         <Cart
-          v-bind:cartItems="cartItems"
-          v-bind:cartTotal="cartTotal"
-          v-bind:cartActions="false"
+          :cartItems="cartItems"
+          :cartTotal="cartTotal"
+          :cartActions="false"
         />
       </div>
     </div>
     <PaymentArea
-      v-bind:paymentMethods="paymentMethods"
-      v-bind:paymentMethodsResponse="paymentMethodsResponse"
-      v-bind:selectedpm="selectedpm"
+      :paymentMethods="paymentMethods"
+      :paymentMethodsResponse="paymentMethodsResponse"
+      :selectedpm="selectedpm"
       @change-pm="onSelectPaymentMethod"
     />
   </main>
@@ -210,6 +216,7 @@ export default {
           this.shopperBillingAddress.firstName = '';
           this.shopperBillingAddress.lastName = '';
           this.shopperBillingAddress.telephone = '';
+          this.showShopperForm = true;
           break;
         case "shipping":
           this.shopperShippingAddress.street = '';
@@ -217,6 +224,7 @@ export default {
           this.shopperShippingAddress.postcode = '';
           this.shopperShippingAddress.region = '';
           this.shopperShippingAddress.country_code = '';
+          this.showShippingForm = true;
           break;
         case "billing":
           this.shopperBillingAddress.street = '';
@@ -224,6 +232,7 @@ export default {
           this.shopperBillingAddress.postcode = '';
           this.shopperBillingAddress.region = '';
           this.shopperBillingAddress.country_code = '';
+          this.showBillingForm = true;
           break;
       }
     },
@@ -267,7 +276,7 @@ export default {
           }
         }
         else {
-          this.showBillingForm = true;
+          this.shopperBillingAddress.street == '' ? this.showBillingForm = true : null;
         }
         this.showShippingForm = false;
       }

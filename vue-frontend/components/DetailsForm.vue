@@ -5,7 +5,7 @@
       <div
         class="pencil-icon"
         v-if="!isDetailsSet"
-        v-on:click=""
+        v-on:click="onEdit()"
       >
         <PencilIcon/>
       </div>
@@ -35,6 +35,7 @@ export default {
   props: {
     isDetailsSet: Boolean,
     title: String,
+    type: String,
   },
   methods: {
     sendDetailsForm() {
@@ -45,6 +46,9 @@ export default {
       localDetails.telephone = document.getElementById('phoneNumber').value;
 
       this.$emit('send-form', localDetails);
+    },
+    onEdit() {
+      this.$emit('edit-form', this.type);
     },
   }
 }
