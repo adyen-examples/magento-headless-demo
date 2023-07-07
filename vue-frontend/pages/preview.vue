@@ -49,32 +49,21 @@ export default {
 
   methods: {
     async storage() {
-
       let storedCart = localStorage.getItem('cart');
       if (storedCart) {
         this.cartId = storedCart;
+        const response = await this.queryCart();
+        this.updateCart(response);
+        console.log(response);
       } else {
         await this.getCartId();
         localStorage.setItem('cart', this.cartId);
-      }
-
-      let storedCartItems = localStorage.getItem('cartItems');
-      if (storedCartItems) {
-        this.cartItems = JSON.parse(storedCartItems);
-      }
-
-      let storedCartTotal = localStorage.getItem('cartTotal');
-      if (storedCartTotal) {
-        this.cartTotal = JSON.parse(storedCartTotal);
       }
     },
 
     updateCart(responseObj){
       this.cartItems = responseObj.cart.items;
       this.cartTotal = responseObj.cart.prices.grand_total.value + " " + responseObj.cart.prices.grand_total.currency;
-
-      localStorage.setItem('cartItems', JSON.stringify(this.cartItems));
-      localStorage.setItem('cartTotal', JSON.stringify(this.cartTotal));
     },
 
     async getCartId() {
@@ -131,6 +120,17 @@ export default {
       }
     },
 
+    // Query current cart. Might use this instead of localStorage to retrieve active cart contents
+    async queryCart() {
+      try {
+        const cartId = this.cartId;
+        const response = await graphql.queryCart(cartId);
+        return response.data;
+
+      } catch (error) {
+        console.error(error);
+      }
+    },
   },
 
 };
