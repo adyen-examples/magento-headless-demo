@@ -14,12 +14,11 @@
           :src="prod.product.image.url"
         />
         <p class="order-summary-list-list-item-title">
-          {{prod.product.name}}
+          {{prod.product.name}} ({{prod.quantity}})
         </p>
         <p class="order-summary-list-list-item-price">
           {{prod.product.price_range.minimum_price.regular_price.value.toFixed(2)}}
           {{prod.product.price_range.minimum_price.regular_price.currency}}
-          ({{prod.quantity}})
         </p>
         <button
           class="order-summary-list-list-item-button"

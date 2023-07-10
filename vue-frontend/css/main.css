@@ -644,6 +644,8 @@ form {
 
 .order-summary-list-list-item .product-img {
   max-width: 20%;
+  max-height: 100%;
+  background-size: contain;
   margin-right: 2%;
 }
 
