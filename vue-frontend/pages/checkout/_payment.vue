@@ -38,7 +38,7 @@
             <div class="form-header">
               <h2> Shipping Method Address </h2>
               <div class="pencil-icon">
-                <RefreshIcon/>
+                <PencilIcon/>
               </div>
             </div>
             <div class="shipping-method-container" v-for="(meth, index) in this.shippingMethods" :key="index">
@@ -72,12 +72,11 @@ let AdyenCheckout;
 // CSS Files
 import '@adyen/adyen-web/dist/adyen.css';
 // Components
-import PencilIcon from '../../components/PencilIcon.vue';
-import RefreshIcon from '../../components/RefreshIcon.vue';
-import Cart from '../../components/Cart.vue';
 import AddressForm from '../../components/AddressForm.vue';
+import Cart from '../../components/Cart.vue';
 import DetailsForm from '../../components/DetailsForm.vue';
 import PaymentArea from '../../components/PaymentArea.vue';
+import PencilIcon from '../../components/PencilIcon.vue';
 // Helpers
 import * as graphql from '../../plugins/graphql.js';
 if (process.client) {
@@ -87,7 +86,6 @@ if (process.client) {
 export default {
   components: {
     PencilIcon,
-    RefreshIcon,
     Cart,
     PaymentArea,
     AddressForm,

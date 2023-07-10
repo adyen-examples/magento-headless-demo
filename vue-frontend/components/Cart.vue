@@ -3,10 +3,15 @@
     <h2>
       Cart
     </h2>
-    <ul class="order-summary-list">
+    <div class="order-summary-list" v-if="cartItems.length == 0">
+      <EmptyCartIcon />
+    </div>
+    <ul 
+      class="order-summary-list" 
+      v-else
+    >
       <li
         class="order-summary-list-list-item"
-        v-if="cartItems.length"
         v-for="prod in cartItems"
       >
         <img
@@ -62,6 +67,8 @@
 </template>
 
 <script>
+import EmptyCartIcon from './EmptyCartIcon.vue';
+
 export default {
   name: 'Cart',
   props: {
@@ -69,6 +76,9 @@ export default {
     cartTotal: String,
     cartActions: Boolean,
     shippingCosts: Object,
+  },
+  components: {
+    EmptyCartIcon,
   },
   methods: {
     addToCart(product){

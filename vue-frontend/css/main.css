@@ -763,3 +763,15 @@ form {
   width: 150px;
   height: auto;
 }
+
+.cart-icon svg {
+  width: 8rem;
+  /* #687282 */
+  filter: invert(45%) sepia(7%) saturate(1063%) hue-rotate(178deg) brightness(93%) contrast(77%);
+  margin-bottom: 2rem;
+}
+
+.empty-cart-notice {
+  color: #687282;
+  font-size: 1.4em;
+}
