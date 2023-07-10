@@ -6,7 +6,11 @@
       <StoreList
         :items="storeItems"
         @add-item="addItem"
+        v-if="!loading"
       />
+      <div class="spinnerElement" v-else>
+        <RefreshIcon/>
+      </div>
       <div class="summary-column">
         <Cart
           :cartItems="cartItems"
@@ -24,6 +28,7 @@
 <script>
 import Cart from '../components/Cart.vue';
 import StoreList from '../components/StoreList.vue';
+import RefreshIcon from '../components/RefreshIcon.vue';
 import * as graphql from '../plugins/graphql.js';
 
 export default {
@@ -33,6 +38,7 @@ export default {
   components: {
     Cart,
     StoreList,
+    RefreshIcon,
   },
   data() {
     return {
@@ -40,6 +46,7 @@ export default {
       storeItems: [],
       cartItems: [],
       cartTotal: "0.00 EUR",
+      loading: true,
     }
   },
 
@@ -52,15 +59,14 @@ export default {
     async storage() {
       let storedCart = localStorage.getItem('cart');
       if (storedCart != null) {
-        console.log("stored detected");
         this.cartId = storedCart;
         const response = await this.queryCart();
         this.updateCart(response);
       } else {
-        console.log("nostored detected");
         await this.getCartId();
         localStorage.setItem('cart', this.cartId);
       }
+      this.loading = false;
     },
 
     updateCart(responseObj){

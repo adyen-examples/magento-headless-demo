@@ -735,3 +735,31 @@ form {
   margin: auto auto auto 5%;
   color: #687282;
 }
+
+.spinnerElement {
+  width: 100%;
+  height: 20vh;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+.spin {
+  animation-name: spin;
+  animation-duration: 8s;
+  animation-iteration-count: infinite;
+  transform-origin: 50% 50%;
+  display: inline-block;
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.spin svg {
+  width: 150px;
+  height: auto;
+}
