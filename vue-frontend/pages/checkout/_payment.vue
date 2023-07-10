@@ -161,6 +161,7 @@ export default {
 
       this.cartItems = response.cart.items;
       this.cartTotal = response.cart.prices.grand_total.value.toFixed(2) + " " + response.cart.prices.grand_total.currency;
+
       if(response.cart.email) {
         this.showShopperForm = false;
       }
@@ -321,7 +322,7 @@ export default {
         }
       };
 
-      const pmExclude = ['applepay', 'c_cash', 'paypal'];
+      const pmExclude = ['applepay', 'c_cash', 'paypal', 'genericgiftcard', 'givex'];
       this.paymentMethods = this.paymentMethods.filter((pm, index) => !pmExclude.includes(pm.type));
       this.paymentMethodsResponse.paymentMethods = this.paymentMethodsResponse.paymentMethods.filter((pm, index) => !pmExclude.includes(pm.type));
       let schemeDuplicate = -1;
@@ -335,8 +336,7 @@ export default {
           configuration['paymentMethodsConfiguration'][pm.type]['showPayButton'] = true;
         }
       });
-      // console.log(configuration['paymentMethodsConfiguration']);
-      // console.log(this.paymentMethods);
+
       // Remove the duplicated pm object scheme (seems like not needed);
       //schemeDuplicate != -1 ? this.paymentMethods = this.paymentMethods.filter((pm, index) => index != schemeDuplicate) : null;
 
@@ -419,12 +419,10 @@ export default {
         const orderId = this.orderId;
         let payload = state.data;
         payload.orderId = orderId;
-        payload = JSON.stringify(payload);
 
-        // RESPONSE STRUCT: { "adyenPaymentDetails": { "isFinal": true, "resultCode": "Authorised", "additionalData": null, "action": null } }
-        const response = graphql.getAdyenPaymentDetails(cartId, payload);
-        alert(response.data.adyenPaymentDetails.resultCode);
-        this.processResult(response.data.adyenPaymentDetails);
+        const response = await graphql.getAdyenPaymentDetails(cartId,  JSON.stringify(payload));
+        alert(response.adyenPaymentDetails.resultCode);
+        this.processResult(response.adyenPaymentDetails);
 
         return response;
       } catch (error) {
@@ -438,7 +436,7 @@ export default {
         const cartId = this.cartId;
         const orderId = this.orderId;
 
-        const response = graphql.getAdyenPaymentStatus(cartId, orderId);
+        const response = await graphql.getAdyenPaymentStatus(cartId, orderId);
         this.adyenStatusResponse  = response;
         return response;
 

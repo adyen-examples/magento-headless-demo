@@ -678,8 +678,8 @@ export async function getAdyenPaymentDetails(cartId, payload) {
       variables: {cartId: cartId, payload: payload },
     });
 
-    const response = await graphql.sendGraphQLReq(data);
-    return response;
+    const response = await this.sendGraphQLReq(data);
+    return response.data;
 
   } catch (error) {
     console.log(error);

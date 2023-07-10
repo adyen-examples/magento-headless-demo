@@ -51,11 +51,13 @@ export default {
   methods: {
     async storage() {
       let storedCart = localStorage.getItem('cart');
-      if (storedCart) {
+      if (storedCart != null) {
+        console.log("stored detected");
         this.cartId = storedCart;
         const response = await this.queryCart();
         this.updateCart(response);
       } else {
+        console.log("nostored detected");
         await this.getCartId();
         localStorage.setItem('cart', this.cartId);
       }
