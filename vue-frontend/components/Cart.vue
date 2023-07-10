@@ -36,6 +36,21 @@
         </button>
       </li>
     </ul>
+    <div
+      class="order-summary-list-list-item"
+      v-if="shippingCosts != null"
+    >
+      <p class="order-summary-list-list-item-tag">
+        Shipping Costs:
+      </p>
+      <p class="order-summary-list-list-item-title">
+        {{shippingCosts.carrier_title}} - ({{shippingCosts.method_title}})
+      </p>
+      <p class="order-summary-list-list-item-price">
+        {{shippingCosts.amount.value.toFixed(2)}}
+        {{shippingCosts.amount.currency}}
+      </p>
+    </div>
     <div class="cart-footer">
       <span class="cart-footer-label"> Total: </span>
       <span class="cart-footer-amount"> {{cartTotal}} </span>
@@ -53,6 +68,7 @@ export default {
     cartItems: Array,
     cartTotal: String,
     cartActions: Boolean,
+    shippingCosts: Object,
   },
   methods: {
     addToCart(product){

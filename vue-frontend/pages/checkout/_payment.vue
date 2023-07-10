@@ -43,7 +43,7 @@
             </div>
             <div class="shipping-method-container" v-for="(meth, index) in this.shippingMethods" :key="index">
               <input type="radio" :id="'smethod-' + index" name="smethod" @change="onCheckBoxChange($event)">
-              <label for="smethod"> {{meth.carrier_title}} - {{meth.method_title}}: + {{meth.amount.value}} {{meth.amount.currency}} </label><br>
+              <label for="smethod"> {{meth.carrier_title}} - {{meth.method_title}}: + {{meth.amount.value.toFixed(2)}} {{meth.amount.currency}} </label><br>
             </div>
           </div>
         </div>
@@ -53,6 +53,7 @@
           :cartItems="cartItems"
           :cartTotal="cartTotal"
           :cartActions="false"
+          :shippingCosts="selectedShippingMethod"
         />
       </div>
     </div>
@@ -97,18 +98,18 @@ export default {
   },
   data() {
     return {
-      cartId: '',
       checkout: '',
       selectedpm: '',
-      selectedShippingMethod: '',
+      selectedShippingMethod: null,
       paymentMethods: [],
       shippingMethods: [],
       adyenStatusResponse: '',
       paymentMethodsResponse: {},
       orderId:'',
+      stateData:'',
+      cartId: '',
       cartItems:[],
       cartTotal: '',
-      stateData:'',
       showShopperForm: true,
       showShippingForm: true,
       showBillingForm: true,
@@ -159,7 +160,7 @@ export default {
       const response = await this.queryCart();
 
       this.cartItems = response.cart.items;
-      this.cartTotal = response.cart.prices.grand_total.value + " " + response.cart.prices.grand_total.currency;
+      this.cartTotal = response.cart.prices.grand_total.value.toFixed(2) + " " + response.cart.prices.grand_total.currency;
       if(response.cart.email) {
         this.showShopperForm = false;
       }

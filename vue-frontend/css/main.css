@@ -248,7 +248,7 @@ a:hover {
 .order-summary-list-list-item {
   border-bottom: 1px solid #e6e9eb;
   display: flex;
-  height: 97px;
+  height: auto;
   width: 100%;
   padding: 2%;
   font-size: 12px;
@@ -261,7 +261,7 @@ a:hover {
 }
 .order-summary-list-list-item-title {
   font-weight: 700;
-  margin: auto auto auto 0;
+  margin: auto auto auto 10%;
 }
 
 .order-summary-list-list-item-button {
@@ -508,7 +508,7 @@ table {
   max-width: 60%;
   height: 100%;
   flex-flow: row wrap;
-  margin-right: 1%;
+  justify-content: center;
 }
 
 .summary-column {
@@ -526,7 +526,7 @@ table {
 }
 
 .item-container {
-  width: 40%;
+  max-width: 35%;
   flex-grow: 2;
   height: 20%;
   border: solid 1px #3a4a5c;
@@ -552,14 +552,15 @@ tr {
 }
 
 .product-img {
-  width:100%;
-  height:100%;
+  max-width: 100%;
+  max-height: 100%;
+  display: block;
   object-fit: cover;
   overflow: hidden;
 }
 
 .store-product-img {
-  width: 50%;
+  max-width: 50%;
   height: 100%;
 }
 
@@ -681,8 +682,24 @@ form {
   margin-bottom: 0.5rem;
 }
 
+.form-header h2 {
+  margin-top: 0.8rem;
+}
+.form-header .pencil-icon {
+  margin-top: 0.8rem;
+  margin-right: 0.8rem;
+}
+
+.shipping-method-container {
+  margin-top: 5%;
+}
+
 .shipping-method-container input{
   width: 15%;
+}
+
+.shipping-method-container label{
+  width: 60%;
 }
 
 .top-container {
@@ -711,4 +728,10 @@ form {
   padding: 1%;
   margin-bottom: 2%;
   min-width: 80px;
+}
+
+.order-summary-list-list-item-tag {
+  font-weight: 800;
+  margin: auto auto auto 5%;
+  color: #687282;
 }

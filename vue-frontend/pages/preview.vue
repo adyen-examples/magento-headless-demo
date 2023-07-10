@@ -12,6 +12,7 @@
           :cartItems="cartItems"
           :cartTotal="cartTotal"
           :cartActions="true"
+          :shippingCosts="null"
           @add-item="addItem"
           @remove-item="deleteItem"
         />
