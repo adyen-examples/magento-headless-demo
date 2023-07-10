@@ -163,8 +163,8 @@ export default {
       if(response.cart.email) {
         this.showShopperForm = false;
       }
-      this.updateShipping(response);
-      this.updateBilling(response);
+      this.updateShippingForm(response);
+      this.updateBillingForm(response);
 
     },
 
@@ -176,7 +176,7 @@ export default {
       await this.getPaymentMethods();
     },
 
-    updateShipping(data){
+    updateShippingForm(data){
       if(data.cart.shipping_addresses.length > 0) {
         this.shopperShippingAddress.firstName = data.cart.shipping_addresses[0].firstname;
         this.shopperShippingAddress.lastName = data.cart.shipping_addresses[0].lastname;
@@ -192,7 +192,7 @@ export default {
       }
     },
 
-    updateBilling(data) {
+    updateBillingForm(data) {
       if(data.cart.billing_address != null) {
         this.shopperBillingAddress.firstName = data.cart.billing_address.firstname;
         this.shopperBillingAddress.lastName = data.cart.billing_address.lastname;
@@ -320,7 +320,7 @@ export default {
         }
       };
 
-      const pmExclude = ['alipay', 'unionpay', 'applepay', 'c_cash', 'wechatpayQR', 'genericgiftcard', 'givex', 'bankTransfer_NL', 'ratepay', 'paypal', 'giftcard', 'eps', 'sepadirectdebit', 'multibanco'];
+      const pmExclude = ['applepay', 'c_cash', 'paypal'];
       this.paymentMethods = this.paymentMethods.filter((pm, index) => !pmExclude.includes(pm.type));
       this.paymentMethodsResponse.paymentMethods = this.paymentMethodsResponse.paymentMethods.filter((pm, index) => !pmExclude.includes(pm.type));
       let schemeDuplicate = -1;
@@ -463,7 +463,7 @@ export default {
       try {
         const cartId = this.cartId;
         const response = await graphql.setShippingAddressesOnCart(cartId, address);
-        this.updateShipping(response);
+        this.updateShippingForm(response);
         return response;
 
       } catch (error) {
@@ -476,7 +476,7 @@ export default {
       try {
         const cartId = this.cartId;
         const response = await graphql.setBillingAddressOnCart(cartId, address);
-        this.updateBilling(response);
+        this.updateBillingForm(response);
         return response;
 
       } catch (error) {

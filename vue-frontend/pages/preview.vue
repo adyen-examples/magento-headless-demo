@@ -38,7 +38,7 @@ export default {
       cartId: '',
       storeItems: [],
       cartItems: [],
-      cartTotal: "0 EUR",
+      cartTotal: "0.00 EUR",
     }
   },
 
@@ -54,7 +54,6 @@ export default {
         this.cartId = storedCart;
         const response = await this.queryCart();
         this.updateCart(response);
-        console.log(response);
       } else {
         await this.getCartId();
         localStorage.setItem('cart', this.cartId);
@@ -63,7 +62,7 @@ export default {
 
     updateCart(responseObj){
       this.cartItems = responseObj.cart.items;
-      this.cartTotal = responseObj.cart.prices.grand_total.value + " " + responseObj.cart.prices.grand_total.currency;
+      this.cartTotal = responseObj.cart.prices.grand_total.value.toFixed(2) + " " + responseObj.cart.prices.grand_total.currency;
     },
 
     async getCartId() {

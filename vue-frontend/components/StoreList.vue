@@ -12,7 +12,7 @@
         {{item.name}}
       </div>
       <div class="statval">
-        {{item.price_range.minimum_price.regular_price.value}}
+        {{item.price_range.minimum_price.regular_price.value.toFixed(2)}}
         {{item.price_range.minimum_price.regular_price.currency}}
         <br>
         <button v-on:click="addToCart(item)">

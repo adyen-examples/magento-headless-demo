@@ -17,7 +17,7 @@
           {{prod.product.name}}
         </p>
         <p class="order-summary-list-list-item-price">
-          {{prod.product.price_range.minimum_price.regular_price.value}}
+          {{prod.product.price_range.minimum_price.regular_price.value.toFixed(2)}}
           {{prod.product.price_range.minimum_price.regular_price.currency}}
           ({{prod.quantity}})
         </p>

@@ -22,6 +22,7 @@
           <img
             v-if="pm.icon"
             :src="pm.icon.url"
+            :style="{ height: pm.icon.height, width: pm.icon.width + 'px' }"
           >
           <label
             v-if="paymentMethodsResponse.paymentMethods[index]"
@@ -52,7 +53,6 @@ export default {
   methods: {
     changeSelectedPaymentMethod(event){
       this.$emit('change-pm', event);
-      console.log(event);
     },
   }
 }
