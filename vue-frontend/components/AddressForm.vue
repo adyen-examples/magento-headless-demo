@@ -20,9 +20,9 @@
       <input type="text" id="city" name="city">
       <input type="text" id="region" name="region"><br>
       <label for="country">Country</label>
-      <label v-if="canSameBilling" for="samebilling" id="checkbox-label">Same as Billing</label>
+      <label v-if="canSameBilling" for="samebilling" id="checkbox-label">Same as Billing</label><br>
+      <input type="text" id="country" name="country">
       <input v-if="canSameBilling" type="checkbox" id="samebilling" name="samebilling"><br>
-      <input type="text" id="country" name="country"><br>
       <button type='button' @click="sendAddressForm()">Submit</button>
     </form>
   </div>

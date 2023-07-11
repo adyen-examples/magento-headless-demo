@@ -6,8 +6,8 @@
     <div class="order-summary-list" v-if="cartItems.length == 0">
       <EmptyCartIcon />
     </div>
-    <ul 
-      class="order-summary-list" 
+    <ul
+      class="order-summary-list"
       v-else
     >
       <li
