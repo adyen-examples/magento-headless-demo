@@ -37,12 +37,15 @@
           <div class="shipping-method-selector">
             <div class="form-header">
               <h2> Shipping Method </h2>
-              <div class="pencil-icon">
+              <div
+                class="pencil-icon"
+                v-on:click="onEditForm('shipmethod')"
+              >
                 <PencilIcon/>
               </div>
             </div>
             <div class="shipping-method-container" v-for="(meth, index) in this.shippingMethods" :key="index">
-              <input type="radio" :id="'smethod-' + index" name="smethod" @change="onCheckBoxChange($event)">
+              <input type="radio" :id="'smethod-' + index" name="smethod" class="smethod" @change="onCheckBoxChange($event)">
               <label for="smethod"> {{meth.carrier_title}} - {{meth.method_title}}: + {{meth.amount.value.toFixed(2)}} {{meth.amount.currency}} </label><br>
             </div>
           </div>
@@ -201,7 +204,6 @@ export default {
         this.shopperShippingAddress.telephone = data.cart.shipping_addresses[0].telephone;
         this.shippingMethods = data.cart.shipping_addresses[0].available_shipping_methods;
         this.showShippingForm = false;
-        this.selected_shipping_method = data.cart.shipping_addresses[0].selected_shipping_method != null ? data.cart.shipping_addresses[0].selected_shipping_method : null;
       }
     },
 
@@ -246,6 +248,14 @@ export default {
           this.shopperBillingAddress.region = '';
           this.shopperBillingAddress.country_code = '';
           this.showBillingForm = true;
+          break;
+        case "shipmethod":
+          this.selectedShippingMethod = null;
+          this.paymentMethods = [];
+          let inputs = document.getElementsByClassName("smethod");
+          for (let input of inputs) {
+            input.checked = false;
+          }
           break;
       }
     },

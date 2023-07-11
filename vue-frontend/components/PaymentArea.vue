@@ -1,5 +1,5 @@
 <template>
-  <div class="bottom-container">
+  <div class="bottom-container" v-if="paymentMethods.length > 0">
     <h2> Payment </h2>
     <div class="payment-container">
       <div
