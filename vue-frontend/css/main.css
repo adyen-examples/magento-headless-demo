@@ -246,13 +246,13 @@ a:hover {
   width: 100%;
 }
 .order-summary-list-list-item {
-  border-bottom: 1px solid #e6e9eb;
   display: flex;
-  height: auto;
   width: 100%;
+  height: auto;
   padding: 2%;
   font-size: 12px;
-  text-align: left;
+  text-align: right;
+  border-bottom: 1px solid #e6e9eb;
 }
 .order-summary-list-list-item-image {
   height: 64px;
@@ -276,8 +276,7 @@ a:hover {
 .order-summary-list-list-item-price {
   color: #687282;
   margin: auto 16px;
-  text-align: left;
-  width: 30%;
+  width: 15%;
   margin-left: 0;
 }
 @media (min-width: 768px) {
@@ -310,6 +309,10 @@ a:hover {
   margin-top: 17px;
   text-align: right;
   align-items: center;
+}
+
+.cart-footer span {
+  padding-right: 3%;
 }
 @media (min-width: 768px) {
   .cart-footer {
@@ -515,7 +518,7 @@ table {
   display: flex;
   flex-direction: column;
   width: 50%;
-  padding: 1%;
+  /* padding: 1%; */
   border-left: solid 1px #e6e9eb;
   /* background-color: #3a4a5c;
   color: #f7f8f9; */
