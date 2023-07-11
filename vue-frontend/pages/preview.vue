@@ -1,16 +1,12 @@
 <template>
   <main class="preview-page">
-    <section class="cart">
+    <section class="cart" v-if="!loading">
       <div class="margin-container">
       </div>
       <StoreList
         :items="storeItems"
         @add-item="addItem"
-        v-if="!loading"
       />
-      <div class="spinnerElement" v-else>
-        <RefreshIcon/>
-      </div>
       <div class="summary-column">
         <Cart
           :cartItems="cartItems"
@@ -19,13 +15,12 @@
           :shippingCosts="null"
           @add-item="addItem"
           @remove-item="deleteItem"
-          v-if="!loading"
         />
-        <div class="spinnerElement" v-else>
-          <RefreshIcon/>
-        </div>
       </div>
     </section>
+    <div class="spinnerElement" v-else>
+      <RefreshIcon/>
+    </div>
   </main>
 </template>
 

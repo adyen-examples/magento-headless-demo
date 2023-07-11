@@ -1,5 +1,5 @@
 <template>
-  <main class="payment-page">
+  <main class="payment-page" v-if="!loading">
     <div class="top-container">
       <div class="margin-container">
       </div>
@@ -36,7 +36,7 @@
           </div>
           <div class="shipping-method-selector">
             <div class="form-header">
-              <h2> Shipping Method Address </h2>
+              <h2> Shipping Method </h2>
               <div class="pencil-icon">
                 <PencilIcon/>
               </div>
@@ -59,9 +59,7 @@
           :shippingCosts="selectedShippingMethod"
           v-if="!loading"
         />
-        <div class="spinnerElement" v-else>
-          <RefreshIcon/>
-        </div>
+
       </div>
     </div>
     <PaymentArea
@@ -72,6 +70,9 @@
       v-if="selectedShippingMethod"
     />
   </main>
+  <div class="spinnerElement" v-else>
+    <RefreshIcon/>
+  </div>
 
 </template>
 
