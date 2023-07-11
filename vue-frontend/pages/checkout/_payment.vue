@@ -4,7 +4,7 @@
       <div class="margin-container">
       </div>
       <div id="payment-page" class="store-container">
-        <div class="forms">
+        <div class="forms" v-if="!loading">
           <div class="form-shopper-data">
             <DetailsForm
               :isDetailsSet="showShopperForm"
@@ -47,6 +47,9 @@
             </div>
           </div>
         </div>
+        <div class="spinnerElement" v-else>
+          <RefreshIcon/>
+        </div>
       </div>
       <div class="summary-column">
         <Cart
@@ -54,7 +57,11 @@
           :cartTotal="cartTotal"
           :cartActions="false"
           :shippingCosts="selectedShippingMethod"
+          v-if="!loading"
         />
+        <div class="spinnerElement" v-else>
+          <RefreshIcon/>
+        </div>
       </div>
     </div>
     <PaymentArea
@@ -62,6 +69,7 @@
       :paymentMethodsResponse="paymentMethodsResponse"
       :selectedpm="selectedpm"
       @change-pm="onSelectPaymentMethod"
+      v-if="selectedShippingMethod"
     />
   </main>
 
@@ -72,11 +80,12 @@ let AdyenCheckout;
 // CSS Files
 import '@adyen/adyen-web/dist/adyen.css';
 // Components
-import AddressForm from '../../components/AddressForm.vue';
+import PencilIcon from '../../components/PencilIcon.vue';
+import RefreshIcon from '../../components/RefreshIcon.vue';
 import Cart from '../../components/Cart.vue';
+import AddressForm from '../../components/AddressForm.vue';
 import DetailsForm from '../../components/DetailsForm.vue';
 import PaymentArea from '../../components/PaymentArea.vue';
-import PencilIcon from '../../components/PencilIcon.vue';
 // Helpers
 import * as graphql from '../../plugins/graphql.js';
 if (process.client) {
@@ -89,13 +98,15 @@ export default {
     Cart,
     PaymentArea,
     AddressForm,
-    DetailsForm
+    DetailsForm,
+    RefreshIcon,
   },
   props: {
 
   },
   data() {
     return {
+      loading: true,
       checkout: '',
       selectedpm: '',
       selectedShippingMethod: null,
@@ -109,8 +120,8 @@ export default {
       cartItems:[],
       cartTotal: '',
       showShopperForm: true,
-      showShippingForm: true,
-      showBillingForm: true,
+      showShippingForm: false,
+      showBillingForm: false,
       shopperBillingAddress: {
         firstName: '',
         lastName: '',
@@ -166,6 +177,7 @@ export default {
       this.updateShippingForm(response);
       this.updateBillingForm(response);
 
+      this.loading = false;
     },
 
     //// HANDLERS

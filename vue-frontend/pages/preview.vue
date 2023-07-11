@@ -19,7 +19,11 @@
           :shippingCosts="null"
           @add-item="addItem"
           @remove-item="deleteItem"
+          v-if="!loading"
         />
+        <div class="spinnerElement" v-else>
+          <RefreshIcon/>
+        </div>
       </div>
     </section>
   </main>
