@@ -766,6 +766,13 @@ tr {
   margin-right: 5%;
 }
 
+.forms select {
+  color: #687282;
+  font-weight: 700;
+  width: 30%;
+  margin-right: 5%;
+}
+
 .forms button {
   background-color: #3a4a5c;
   color: #f7f8f9;

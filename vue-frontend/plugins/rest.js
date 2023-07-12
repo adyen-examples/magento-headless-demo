@@ -280,4 +280,4 @@ export async function getAdyenPaymentDetails(cartId, payload) {
     console.log(error);
   }
 }
-  
+

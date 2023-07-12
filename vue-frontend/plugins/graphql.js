@@ -685,3 +685,30 @@ export async function getAdyenPaymentDetails(cartId, payload) {
     console.log(error);
   }
 }
+
+export async function getCountries() {
+  try {
+    const data = JSON.stringify({
+      query: `{
+        countries {
+          id
+          two_letter_abbreviation
+          full_name_english
+          full_name_locale
+          available_regions {
+              id
+              code
+              name
+          }
+        }
+      }`,
+    });
+
+    const response = await this.sendGraphQLReq(data);
+    return response.data;
+
+  } catch (error) {
+    console.log(error);
+  }
+
+}

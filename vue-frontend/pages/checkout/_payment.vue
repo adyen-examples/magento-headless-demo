@@ -20,6 +20,7 @@
               :canSameBilling="true"
               :title="'Shipping Address'"
               :type="'shipping'"
+              :countryOptions="countryOptions"
               @send-form="setFormShippingAddress"
               @edit-form="onEditForm"
             />
@@ -30,6 +31,7 @@
               :canSameBilling="false"
               :title="'Billing Address'"
               :type="'billing'"
+              :countryOptions="countryOptions"
               @send-form="setFormBillingAddress"
               @edit-form="onEditForm"
             />
@@ -111,6 +113,7 @@ export default {
       selectedShippingMethod: null,
       paymentMethods: [],
       shippingMethods: [],
+      countryOptions: [],
       adyenStatusResponse: '',
       paymentMethodsResponse: {},
       orderId:'',
@@ -163,7 +166,6 @@ export default {
 
   methods: {
     async storage() {
-
       this.cartId = localStorage.getItem('cart');
       const response = await this.queryCart();
 
@@ -175,6 +177,9 @@ export default {
       }
       this.updateShippingForm(response);
       this.updateBillingForm(response);
+
+      const resp = await graphql.getCountries();
+      this.countryOptions = resp.countries;
 
       this.loading = false;
     },
