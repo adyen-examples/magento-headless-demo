@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div class="form-header">
-      <h2> {{title}}  </h2>
+    <div className="form-header">
+      <h2> {{ tit le }} </h2>
       <div
-        class="pencil-icon"
+        className="pencil-icon"
         v-if="!isAddressSet"
         v-on:click="onEdit()"
       >
@@ -12,33 +12,34 @@
     </div>
 
     <form v-if="isAddressSet">
-      <label for="street">Street:</label>
-      <label for="postcode">Postcode</label><br>
+      <label htmlFor="street">Street:</label>
+      <label htmlFor="postcode">Postcode</label><br>
       <input type="text" id="street" name="street">
       <input type="text" id="postcode" name="postcode"><br>
-      <label for="city">City:</label>
-      <label for="region">Region</label><br>
+      <label htmlFor="city">City:</label>
+      <label htmlFor="region">Region</label><br>
       <input type="text" id="city" name="city">
       <select id="region" name="region">
-        <option :value="' '"> None </option>
+        <option :value="' '"> None</option>
         <option
           v-for="region in regionOptions"
-          :key="region.code"
+          :key="region.id"
           :value="region.code"
         >
-          {{region.name}}
+          {{ region.name }}
         </option>
       </select><br>
-      <label for="country">Country</label>
-      <label v-if="canSameBilling" for="samebilling" id="checkbox-label">Same as Billing</label><br>
+      <label htmlFor="country">Country</label>
+      <label v-if="canSameBilling" htmlFor="samebilling" id="checkbox-label">Same as Billing</label><br>
       <select id="country" name="country" @change="onCountrySelect($event)">
-        <option :value="' '"> None </option>
+        <option :value="' '"> None</option>
         <option
           v-for="country in countryOptions"
           :key="country.id"
           :value="country.id"
         >
-          {{country.full_name_english != null ? country.full_name_english : country.full_name_locale}} {{'(' + country.id + ')'}}
+          {{ country.full_name_english != null ? country.full_name_english : country.full_name_locale }}
+          {{ '(' + country.id + ')' }}
         </option>
       </select>
       <input v-if="canSameBilling" type="checkbox" id="samebilling" name="samebilling"><br>
@@ -65,14 +66,14 @@ export default {
 
   data() {
     return {
-      regionOptions: Array,
+      regionOptions: null,
     }
   },
 
   methods: {
     sendAddressForm() {
       let localAddress = {};
-      localAddress.street =  document.getElementById('street').value;
+      localAddress.street = document.getElementById('street').value;
       localAddress.postcode = document.getElementById('postcode').value;
       localAddress.city = document.getElementById('city').value;
       localAddress.region = document.getElementById('region').value;
