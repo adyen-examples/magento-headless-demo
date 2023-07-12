@@ -35,19 +35,12 @@
             />
           </div>
           <div class="shipping-method-selector">
-            <div class="form-header">
-              <h2> Shipping Method </h2>
-              <div
-                class="pencil-icon"
-                v-on:click="onEditForm('shipmethod')"
-              >
-                <PencilIcon/>
-              </div>
-            </div>
-            <div class="shipping-method-container" v-for="(meth, index) in this.shippingMethods" :key="index">
-              <input type="radio" :id="'smethod-' + index" name="smethod" class="smethod" @change="onCheckBoxChange($event)">
-              <label for="smethod"> {{meth.carrier_title}} - {{meth.method_title}}: + {{meth.amount.value.toFixed(2)}} {{meth.amount.currency}} </label><br>
-            </div>
+            <ShippingMethodForm
+              :shippingMethods="shippingMethods"
+              :type="'shipmethod'"
+              @send-form="onCheckBoxChange"
+              @edit-form="onEditForm"
+            />
           </div>
         </div>
         <div class="spinnerElement" v-else>
@@ -89,6 +82,7 @@ import RefreshIcon from '../../components/RefreshIcon.vue';
 import Cart from '../../components/Cart.vue';
 import AddressForm from '../../components/AddressForm.vue';
 import DetailsForm from '../../components/DetailsForm.vue';
+import ShippingMethodForm from '../../components/ShippingMethodForm.vue';
 import PaymentArea from '../../components/PaymentArea.vue';
 // Helpers
 import * as graphql from '../../plugins/graphql.js';
@@ -103,6 +97,7 @@ export default {
     PaymentArea,
     AddressForm,
     DetailsForm,
+    ShippingMethodForm,
     RefreshIcon,
   },
   props: {
@@ -508,7 +503,6 @@ export default {
     async setShippingMethod(method) {
       try {
         const cartId = this.cartId;
-
         //set shippingmethod
         const response = await graphql.setShippingMethodsOnCart(cartId, method);
         this.selectedShippingMethod = response.cart.shipping_addresses[0].selected_shipping_method;

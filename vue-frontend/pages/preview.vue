@@ -56,6 +56,8 @@ export default {
 
   methods: {
     async storage() {
+
+      // Set localstorage item to local cartId (if exists), or get new cartId and save to localStorage
       let storedCart = localStorage.getItem('cart');
       if (storedCart != null) {
         this.cartId = storedCart;
@@ -68,11 +70,13 @@ export default {
       this.loading = false;
     },
 
+    // Update cartItems and cartTotal based on a response object
     updateCart(responseObj){
       this.cartItems = responseObj.cart.items;
       this.cartTotal = responseObj.cart.prices.grand_total.value.toFixed(2) + " " + responseObj.cart.prices.grand_total.currency;
     },
 
+    // Query for a new guest cartId and set to data var
     async getCartId() {
       try {
         const response = await graphql.getCartId();
@@ -84,6 +88,7 @@ export default {
       }
     },
 
+    // Query search for items in Magento inventory. Search so far restricted to bags to avoid sizes and color selections mandatory for some items
     async listStoreItems() {
       try {
         const queryString = "Messenger";
@@ -91,12 +96,12 @@ export default {
         this.storeItems = response;
 
         return response;
-
       } catch (error) {
         console.error(error);
       }
     },
 
+    // Query to add item to current cart and update cart info
     async addItem(item) {
       try {
         const cartId = this.cartId;
@@ -106,12 +111,12 @@ export default {
         const response = await graphql.addProductsToCart(cartId, sku, quantity);
         this.updateCart(response);
         return response;
-
       } catch (error) {
         console.error(error);
       }
     },
 
+    // Query to delete all instances of an item from current cart and update cart info
     async deleteItem(item) {
       try {
         const cartId = this.cartId;
@@ -120,19 +125,17 @@ export default {
         const response = await graphql.removeItemFromCart(cartId, productId);
         this.updateCart(response);
         return response;
-
       } catch (error) {
         console.error(error);
       }
     },
 
-    // Query current cart. Might use this instead of localStorage to retrieve active cart contents
+    // Query current cart
     async queryCart() {
       try {
         const cartId = this.cartId;
         const response = await graphql.queryCart(cartId);
         return response.data;
-
       } catch (error) {
         console.error(error);
       }
