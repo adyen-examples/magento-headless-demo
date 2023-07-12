@@ -40,6 +40,7 @@
             <ShippingMethodForm
               :shippingMethods="shippingMethods"
               :type="'shipmethod'"
+              :isShippingMethodSet="selectedShippingMethod != null"
               @send-form="onCheckBoxChange"
               @edit-form="onEditForm"
             />
@@ -57,7 +58,6 @@
           :shippingCosts="selectedShippingMethod"
           v-if="!loading"
         />
-
       </div>
     </div>
     <PaymentArea
@@ -71,13 +71,14 @@
   <div class="spinnerElement" v-else>
     <RefreshIcon/>
   </div>
-
 </template>
 
 <script>
 let AdyenCheckout;
+
 // CSS Files
 import '@adyen/adyen-web/dist/adyen.css';
+
 // Components
 import PencilIcon from '../../components/PencilIcon.vue';
 import RefreshIcon from '../../components/RefreshIcon.vue';
@@ -86,8 +87,10 @@ import AddressForm from '../../components/AddressForm.vue';
 import DetailsForm from '../../components/DetailsForm.vue';
 import ShippingMethodForm from '../../components/ShippingMethodForm.vue';
 import PaymentArea from '../../components/PaymentArea.vue';
+
 // Helpers
 import * as graphql from '../../plugins/graphql.js';
+
 if (process.client) {
   AdyenCheckout = require("@adyen/adyen-web");
 }
@@ -167,20 +170,19 @@ export default {
   methods: {
     async storage() {
       this.cartId = localStorage.getItem('cart');
-      const response = await this.queryCart();
+      const cartResponse = await this.queryCart();
 
-      this.cartItems = response.cart.items;
-      this.cartTotal = response.cart.prices.grand_total.value.toFixed(2) + " " + response.cart.prices.grand_total.currency;
+      this.cartItems = cartResponse.cart.items;
+      this.cartTotal = cartResponse.cart.prices.grand_total.value.toFixed(2) + " " + cartResponse.cart.prices.grand_total.currency;
 
-      if(response.cart.email) {
+      if(cartResponse.cart.email) {
         this.showShopperForm = false;
       }
-      this.updateShippingForm(response);
-      this.updateBillingForm(response);
+      this.updateShippingForm(cartResponse);
+      this.updateBillingForm(cartResponse);
 
-      const resp = await graphql.getCountries();
-      this.countryOptions = resp.countries;
-
+      const countryResponse = await graphql.getCountries();
+      this.countryOptions = countryResponse.countries;
       this.loading = false;
     },
 
@@ -192,7 +194,7 @@ export default {
       await this.getPaymentMethods();
     },
 
-    updateShippingForm(data){
+    updateShippingForm(data) {
       if(data.cart.shipping_addresses.length > 0) {
         this.shopperShippingAddress.firstName = data.cart.shipping_addresses[0].firstname;
         this.shopperShippingAddress.lastName = data.cart.shipping_addresses[0].lastname;
@@ -374,11 +376,11 @@ export default {
       this.stateData = state.data;
     },
 
-    handleDetails(state, component){
+    handleDetails(state, component) {
       let response = this.adyenDetails();
     },
 
-    processResult(paymentStatus){
+    processResult(paymentStatus) {
       localStorage.setItem('orderNumber', this.orderId);
       localStorage.setItem('resultCode', paymentStatus.resultCode);
 
@@ -399,7 +401,7 @@ export default {
       }
     },
 
-    async handlePaymentError(error){
+    async handlePaymentError(error) {
       console.error(error);
       alert("Payment was REFUSED");
       await this.getPaymentMethods();

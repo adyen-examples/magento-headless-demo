@@ -4,6 +4,7 @@
       <h2> Shipping Method </h2>
       <div
         class="pencil-icon"
+        v-if="isShippingMethodSet"
         v-on:click="onEdit"
       >
         <PencilIcon/>
@@ -27,6 +28,7 @@ export default {
   props: {
     shippingMethods: [],
     type: String,
+    isShippingMethodSet: Boolean,
   },
   methods: {
     onSelect($event) {

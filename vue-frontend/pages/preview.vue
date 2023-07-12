@@ -71,7 +71,7 @@ export default {
     },
 
     // Update cartItems and cartTotal based on a response object
-    updateCart(responseObj){
+    updateCart(responseObj) {
       this.cartItems = responseObj.cart.items;
       this.cartTotal = responseObj.cart.prices.grand_total.value.toFixed(2) + " " + responseObj.cart.prices.grand_total.currency;
     },
@@ -130,7 +130,7 @@ export default {
       }
     },
 
-    // Query current cart
+    // Query current cart info
     async queryCart() {
       try {
         const cartId = this.cartId;

@@ -781,7 +781,8 @@ tr {
   width: 10%;
   padding: 1%;
   margin-bottom: 2%;
-  min-width: 69px;;
+  margin-top: 0.8rem;
+  min-width: 69px;
 }
 
 .forms #samebilling {
