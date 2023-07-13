@@ -10,9 +10,13 @@
         <PencilIcon/>
       </div>
     </div>
-    <div class="shipping-method-container" v-for="(meth, index) in this.shippingMethods" :key="index">
-      <input type="radio" :id="'smethod-' + index" name="smethod" class="smethod" @change="onSelect($event)">
-      <label for="smethod"> {{meth.carrier_title}} - {{meth.method_title}}: + {{meth.amount.value.toFixed(2)}} {{meth.amount.currency}} </label><br>
+    <div
+      class="shipping-method-container"
+      v-for="(method, index) in this.shippingMethods"
+      :key="index"
+    >
+      <input type="radio" :id="'smethod-' + index" name="shippingMethod" @change="onSelect($event)">
+      <label for="shippingMethod"> {{method.carrier_title}} - {{method.method_title}}: + {{method.amount.value.toFixed(2)}} {{method.amount.currency}} </label><br>
     </div>
   </div>
 </template>
@@ -26,14 +30,18 @@ export default {
     PencilIcon,
   },
   props: {
-    shippingMethods: [],
+    shippingMethods: Array,
     type: String,
     isShippingMethodSet: Boolean,
   },
   methods: {
+
+    // Emit event to parent when input element changes
     onSelect($event) {
       this.$emit('send-form', $event);
     },
+
+    // Emit event to parent when the pencilIcon is clicked (clear form)
     onEdit() {
       this.$emit('edit-form', this.type);
     },

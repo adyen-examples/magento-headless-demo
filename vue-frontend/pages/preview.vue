@@ -4,7 +4,7 @@
       <div class="margin-container">
       </div>
       <StoreList
-        :items="storeItems"
+        :storeItems="storeItems"
         @add-item="addItem"
       />
       <div class="summary-column">

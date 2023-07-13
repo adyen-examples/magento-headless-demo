@@ -11,15 +11,25 @@
       </div>
     </div>
     <form v-if="isDetailsSet">
-      <label for="firstName">First name:</label>
-      <label for="lastName">Last name:</label><br>
-      <input type="text" id="firstName" name="firstName">
-      <input type="text" id="lastName" name="lastName"><br>
-      <label for="email">Email:</label>
-      <label for="phoneNumber">Phone:</label><br>
-      <input type="text" id="email" name="email">
-      <input type="text" id="phoneNumber" name="phoneNumber"><br>
-      <button type='button' @click="sendDetailsForm()">Submit</button>
+      <label for="firstName">
+        First name:
+      </label>
+      <label for="lastName">
+        Last name:
+      </label><br>
+      <input type="text" id="firstName" name="firstName"/>
+      <input type="text" id="lastName" name="lastName"/><br>
+      <label for="email">
+        Email:
+      </label>
+      <label for="phoneNumber">
+        Phone:
+      </label><br>
+      <input type="text" id="email" name="email"/>
+      <input type="text" id="phoneNumber" name="phoneNumber"/><br>
+      <button type='button' @click="sendDetailsForm()">
+        Submit
+      </button>
     </form>
   </div>
 </template>
@@ -38,6 +48,8 @@ export default {
     type: String,
   },
   methods: {
+
+    // Emit the send-form event to parent component, sending the form values in object format
     sendDetailsForm() {
       let localDetails = {};
       localDetails.firstName = document.getElementById('firstName').value;
@@ -47,6 +59,8 @@ export default {
 
       this.$emit('send-form', localDetails);
     },
+
+    // Emit the edit-form event to parent component. Triggers the form clear function that depends on the form type
     onEdit() {
       this.$emit('edit-form', this.type);
     },

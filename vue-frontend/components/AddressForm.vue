@@ -12,13 +12,21 @@
     </div>
 
     <form v-if="isAddressSet">
-      <label for="street">Street:</label>
-      <label for="postcode">Postcode</label><br>
-      <input type="text" id="street" name="street">
-      <input type="text" id="postcode" name="postcode"><br>
-      <label for="city">City:</label>
-      <label for="country">Country</label>
-      <input type="text" id="city" name="city">
+      <label for="street">
+        Street:
+      </label>
+      <label for="postcode">
+        Postcode
+      </label><br>
+      <input type="text" id="street" name="street"/>
+      <input type="text" id="postcode" name="postcode"/><br>
+      <label for="city">
+        City:
+      </label>
+      <label for="country">
+        Country
+      </label>
+      <input type="text" id="city" name="city"/>
       <select id="country" name="country" @change="onCountrySelect($event)">
         <option :value="' '"> None </option>
         <option
@@ -29,8 +37,13 @@
           {{country.full_name_english != null ? country.full_name_english : country.full_name_locale}} {{'(' + country.id + ')'}}
         </option>
       </select><br>
-      <label for="region">Region</label>
-      <label v-if="canSameBilling" for="samebilling" id="checkbox-label">Same as Billing</label><br>
+
+      <label for="region">
+        Region
+      </label>
+      <label v-if="canSameBilling" for="samebilling" id="checkbox-label">
+        Same as Billing
+      </label><br>
       <select id="region" name="region">
         <option :value="' '"> None </option>
         <option
@@ -41,8 +54,11 @@
           {{region.name}}
         </option>
       </select>
-      <input v-if="canSameBilling" type="checkbox" id="samebilling" name="samebilling"><br>
-      <button type='button' @click="sendAddressForm()">Submit</button>
+
+      <input v-if="canSameBilling" type="checkbox" id="samebilling" name="samebilling"/><br>
+      <button type='button' @click="sendAddressForm()">
+        Submit
+      </button>
     </form>
   </div>
 </template>
@@ -83,7 +99,7 @@ export default {
       this.$emit('send-form', localAddress);
     },
 
-    // Emit the edit-form event to parent component, which triggers the from clear function that depends on the form type
+    // Emit the edit-form event to parent component, which triggers the form clear function that depends on the form type
     onEdit() {
       this.$emit('edit-form', this.type);
     },
