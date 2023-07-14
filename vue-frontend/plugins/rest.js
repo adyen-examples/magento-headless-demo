@@ -89,20 +89,6 @@ export async function searchProducts(searchString) {
 }
 
 
-// TODO
-export async function setGuestEmailOnCart(cartId, shopperEmail) {
-  try {
-    const endpoint ='/rest/default/V1/guest-carts/' + cartId + '/items';
-    const data = null;
-
-    const response = await this.sendRestReq(data, endpoint);
-    return response;
-
-  } catch (error) {
-    console.error(error);
-  }
-}
-
 export async function setShippingAddressesOnCart(cartId, shippingAddress) {
   try {
     console.log(shippingAddress);
@@ -178,12 +164,12 @@ export async function estimateShippingMethods(cartId, billingAddress) {
   }
 }
 
-// TODO
-export async function getAdyenPaymentMethods(cartId) {
+// resources error
+export async function getAdyenPaymentMethods(cartId, quote) {
   try {
     const endpoint ='/rest/default/V1/guest-carts/' + cartId + '/retrieve-adyen-payment-methods';
     const data = JSON.stringify({
-      "cart_id": cartId,
+      "cart_id": quote,
       "shopperLocale": "en_US",
     });
 
@@ -195,29 +181,37 @@ export async function getAdyenPaymentMethods(cartId) {
   }
 }
 
-// TODO
+//Works like this, need to make it dynamic for stateData
 export async function setPaymentMethodAndPlaceOrder(cartId, stateData) {
   try {
-    let data = "";
-    if (stateData.paymentMethod.type === "scheme") {
-      data = JSON.stringify({
+    const steted = null;
+    const endpoint = '/rest/default/V1/guest-carts/' + cartId + '/payment-information';
+    let data = {
+      email: "test@test.com",
+      paymentMethod: {}
+    };
+    //stateData.paymentMethod.type - right now forcing throuhg scheme to test
+    if ("scheme" === "scheme") {
+      data.paymentMethod = {
         method: "adyen_cc",
         additional_data: {
-          cc_type: stateData.paymentMethod.brand,
-          stateData: stateData,
+          //cc_type: stateData.paymentMethod.brand,
+          // stateData: JSON.stringify(stateData),
+          cc_type: 'VI',
+          stateData: steted,
         }
-      });
+      };
     } else {
       let brand = stateData.paymentMethod.type;
-      data = JSON.stringify({
+      data.paymentMethod = {
         method: "adyen_hpp",
         additional_data: {
           brand_code: brand,
-          stateData: null,
+          stateData: JSON.stringify(stateData),
         }
-      });
+      };
     }
-    const response = await this.sendGraphQLReq(data);
+    const response = await this.sendRestReq(JSON.stringify(data), endpoint, 'POST');
     return response;
 
   } catch(error){
@@ -225,13 +219,14 @@ export async function setPaymentMethodAndPlaceOrder(cartId, stateData) {
   }
 }
 
-// TODO
-export async function getAdyenPaymentStatus(cartId, orderId) {
+// resources error
+export async function getAdyenPaymentStatus(orderId) {
   try {
-    const endpoint ='/rest/default/V1/guest-carts/' + cartId + '/items';
-    const data = null;
-
-    const response = await this.sendRestReq(data, endpoint);
+    const endpoint ='/rest/default/V1/adyen/orders/payment-status';
+    const data = JSON.stringify({
+      orderId: orderId,
+    });
+    const response = await this.sendRestReq(data, endpoint, 'POST');
     return response.data.adyenPaymentStatus.resultCode;
 
   } catch (errror) {
@@ -240,12 +235,13 @@ export async function getAdyenPaymentStatus(cartId, orderId) {
 }
 
 // TODO
-export async function getAdyenPaymentDetails(cartId, payload) {
+export async function getAdyenPaymentDetails(stateData) {
   try {
-    const endpoint ='/rest/default/V1/guest-carts/' + cartId + '/items';
-    const data = null;
-
-    const response = await this.sendRestReq(data, endpoint);
+    const endpoint ='/rest/default/V1/adyen/paymentDetails';
+    const data = JSON.stringify({
+      payload: stateData,
+    });
+    const response = await this.sendRestReq(data, endpoint, 'POST');
     return response.data;
 
   } catch (error) {

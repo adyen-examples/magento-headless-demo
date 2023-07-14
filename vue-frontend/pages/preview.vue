@@ -29,6 +29,8 @@ import Cart from '../components/Cart.vue';
 import StoreList from '../components/StoreList.vue';
 import RefreshIcon from '../components/RefreshIcon.vue';
 import * as graphql from '../plugins/graphql.js';
+import * as rest from '../plugins/rest.js';
+
 
 export default {
   head: {
