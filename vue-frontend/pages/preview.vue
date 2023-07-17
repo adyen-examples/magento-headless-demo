@@ -1,46 +1,53 @@
 <template>
   <main class="preview-page">
-    <section class="cart">
+    <section class="cart" v-if="!loading">
       <div class="margin-container">
       </div>
       <StoreList
-        v-bind:items="items"
-        @add-item="addItemToCart"
+        :storeItems="storeItems"
+        @add-item="addItem"
       />
       <div class="summary-column">
         <Cart
-          v-bind:cartItems="cartItems"
-          v-bind:cartTotal="cartTotal"
-          v-bind:cartActions="true"
-          @add-item="addItemToCart"
-          @remove-item="removeItemFromCart"
+          :cartItems="cartItems"
+          :cartTotal="cartTotal"
+          :cartActions="cartItems.length > 0"
+          :shippingCosts="null"
+          @add-item="addItem"
+          @remove-item="deleteItem"
         />
       </div>
     </section>
+    <div class="spinnerElement" v-else>
+      <RefreshIcon/>
+    </div>
   </main>
 </template>
 
 <script>
 import Cart from '../components/Cart.vue';
 import StoreList from '../components/StoreList.vue';
+import RefreshIcon from '../components/RefreshIcon.vue';
+import * as graphql from '../plugins/graphql.js';
+import * as rest from '../plugins/rest.js';
+
 
 export default {
-  asyncData({route}) {
-    return {type: route.query.type};
-  },
   head: {
-    title: "Cart preview",
+    title: "Buy items",
   },
   components: {
     Cart,
     StoreList,
+    RefreshIcon,
   },
   data() {
     return {
       cartId: '',
-      items: [],
+      storeItems: [],
       cartItems: [],
-      cartTotal: "0 EUR",
+      cartTotal: "0.00 EUR",
+      loading: true,
     }
   },
 
@@ -52,143 +59,90 @@ export default {
   methods: {
     async storage() {
 
+      // Set localstorage item to local cartId (if exists), or get new cartId and save to localStorage
       let storedCart = localStorage.getItem('cart');
-      if (storedCart) {
+      if (storedCart != null) {
         this.cartId = storedCart;
+        const response = await this.queryCart();
+        this.updateCart(response);
       } else {
         await this.getCartId();
         localStorage.setItem('cart', this.cartId);
       }
-
-      let storedCartItems = localStorage.getItem('cartItems');
-      if (storedCartItems) {
-        this.cartItems = JSON.parse(storedCartItems);
-      }
-
-      let storedCartTotal = localStorage.getItem('cartTotal');
-      if (storedCartTotal) {
-        this.cartTotal = JSON.parse(storedCartTotal);
-      }
+      this.loading = false;
     },
 
+    // Update cartItems and cartTotal based on a response object
+    updateCart(responseObj) {
+      this.cartItems = responseObj.cart.items;
+      this.cartTotal = responseObj.cart.prices.grand_total.value.toFixed(2) + " " + responseObj.cart.prices.grand_total.currency;
+    },
+
+    // Query for a new guest cartId and set to data var
     async getCartId() {
       try {
-        // Create cart data
-        const data = JSON.stringify({
-          query: `mutation{createEmptyCart}`,
-        });
-
-        const response = await this.sendGraphQLReq(data);
-
-        this.cartId = response.data.createEmptyCart;
+        const response = await graphql.getCartId();
+        this.cartId = response;
         return response;
 
       } catch (error) {
         console.error(error);
-        alert("Error occurred. Look at console for details");
       }
     },
 
+    // Query search for items in Magento inventory. Search so far restricted to bags to avoid sizes and color selections mandatory for some items
     async listStoreItems() {
       try {
-
-        const data = JSON.stringify({
-          query: `{products( search: "Messenger" filter: { price: { to: "50" } } pageSize: 25 sort: { price: DESC }) { items { name sku image { url label position disabled } price_range { minimum_price { regular_price { value currency } } }} total_count page_info { page_size }}}`,
-        });
-
-        const response = await this.sendGraphQLReq(data);
-        this.items = response.data.products.items;
-        // this.logStatus();
+        const queryString = "Messenger";
+        const response = await graphql.searchProducts(queryString);
+        this.storeItems = response;
 
         return response;
-
       } catch (error) {
         console.error(error);
-        alert("Error occurred. Look at console for details");
       }
     },
 
-    async addItemToCart(item) {
+    // Query to add item to current cart and update cart info
+    async addItem(item) {
       try {
         const cartId = this.cartId;
         const sku = item.sku;
         const quantity = 1;
-        const products = '{ quantity:' + quantity + ' sku:' + '"' + sku + '"' + '}';
 
-        // Add items to cart
-        const data = JSON.stringify({
-          query: `mutation{ addProductsToCart( cartId: `
-            + '"' + cartId + '"'
-            + ` cartItems: [` + products
-            + `] ) {  cart {  items { id product { name  sku image { url label position disabled } price_range { minimum_price { regular_price { value currency } } } } quantity } prices { grand_total { value currency } }  } } }`,
-        });
-
-        const response = await this.sendGraphQLReq(data);
-        this.cartItems = response.data.addProductsToCart.cart.items;
-        this.cartTotal = response.data.addProductsToCart.cart.prices.grand_total.value + " " + response.data.addProductsToCart.cart.prices.grand_total.currency;
-        localStorage.setItem('cartItems', JSON.stringify(this.cartItems));
-        localStorage.setItem('cartTotal', JSON.stringify(this.cartTotal));
-
+        const response = await graphql.addProductsToCart(cartId, sku, quantity);
+        this.updateCart(response);
         return response;
-
       } catch (error) {
         console.error(error);
-        // alert("Error occurred. Look at console for details");
       }
     },
 
-    async removeItemFromCart(item) {
+    // Query to delete all instances of an item from current cart and update cart info
+    async deleteItem(item) {
       try {
         const cartId = this.cartId;
         const productId = item;
 
-        // Add items to cart
-        const data = JSON.stringify({
-          query: `mutation{ removeItemFromCart( input: { cart_id: `
-            + '"' + cartId + '"'
-            + `, cart_item_id: `
-            + '"' + productId + '"'
-            + ` }) {  cart {  items { id product { name  sku image { url label position disabled } price_range { minimum_price { regular_price { value currency } } } } quantity } prices { grand_total { value currency } }  } } }`,
-        });
-
-        const response = await this.sendGraphQLReq(data);
-        this.cartItems = response.data.removeItemFromCart.cart.items;
-        localStorage.setItem('cartItems', JSON.stringify(this.cartItems));
+        const response = await graphql.removeItemFromCart(cartId, productId);
+        this.updateCart(response);
         return response;
-
       } catch (error) {
         console.error(error);
-        // alert("Error occurred. Look at console for details");
       }
     },
 
-    async sendGraphQLReq(data) {
+    // Query current cart info
+    async queryCart() {
       try {
-        const host = process.env.BASE_URL;
-        const bearer = process.env.BEARER_TOKEN;
-        var response;
-        response = await fetch(host + '/graphql', {
-          method: 'POST',
-          mode: 'cors',
-          headers: {
-            "Content-Type": "application/json",
-            'Content-Length': data.length,
-            Authorization: 'Bearer ' + bearer,
-            'Origin': '$BaseURL',
-          },
-          body: data,
-        })
-          .then((res) => res.json())
-          //.then((result) => console.log( result))
-          .then(result => response = result)
-        return response;
-
+        const cartId = this.cartId;
+        const response = await graphql.queryCart(cartId);
+        return response.data;
       } catch (error) {
         console.error(error);
-        alert("Error occurred. Look at console for details");
       }
     },
-
   },
+
 };
 </script>
