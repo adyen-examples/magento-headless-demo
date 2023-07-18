@@ -381,7 +381,6 @@ export default {
     },
 
     processResult(paymentStatus) {
-      localStorage.setItem('orderNumber', this.orderId);
       localStorage.setItem('resultCode', paymentStatus.resultCode);
 
       switch (paymentStatus.resultCode) {
@@ -419,7 +418,11 @@ export default {
       try {
         const cartId = this.cartId;
         const response = await graphql.setPaymentMethodAndPlaceOrder(cartId, state.data);
-        this.orderId = response.order.order_id;
+
+        if(response.order != null) {
+          this.orderId = response.order.order_id;
+          localStorage.setItem('orderNumber', this.orderId);
+        }
         let paymentStatus = response.order.adyen_payment_status;
 
         if (!paymentStatus.isFinal) {

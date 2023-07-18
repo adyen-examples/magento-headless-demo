@@ -51,9 +51,6 @@ export default {
     this.orderId = localStorage.getItem('orderNumber');
     this.resultCode = localStorage.getItem('resultCode');
 
-    console.log(this.orderId);
-    console.log(this.resultCode);
-
     localStorage.removeItem('cart');
     localStorage.removeItem('cartTotal');
     localStorage.removeItem('cartItems');

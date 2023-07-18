@@ -60,6 +60,10 @@ export default {
     async storage() {
 
       // Set localstorage item to local cartId (if exists), or get new cartId and save to localStorage
+      if(localStorage.getItem('orderNumber') != null) {
+        localStorage.removeItem('orderNumber');
+      }
+
       let storedCart = localStorage.getItem('cart');
       if (storedCart != null) {
         this.cartId = storedCart;
