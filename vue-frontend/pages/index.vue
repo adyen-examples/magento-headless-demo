@@ -31,14 +31,18 @@
       <li class="integration-list-item">
         <nuxt-link to="/preview" class="integration-list-item-link">
           <div class="title-container">
-            <p class="integration-list-item-title">GraphQL Checkout</p>
+            <p class="integration-list-item-title">
+              GraphQL Checkout
+            </p>
           </div>
         </nuxt-link>
       </li>
       <li class="integration-list-item">
         <nuxt-link to="/" class="integration-list-item-link">
           <div class="title-container">
-            <p class="integration-list-item-title">REST Checkout (TBD)</p>
+            <p class="integration-list-item-title">
+              REST Checkout (TBD)
+            </p>
           </div>
         </nuxt-link>
       </li>

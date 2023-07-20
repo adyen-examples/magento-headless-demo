@@ -3,10 +3,15 @@
     <h2>
       Cart
     </h2>
-    <ul class="order-summary-list">
+    <div class="order-summary-list" v-if="cartItems.length == 0">
+      <EmptyCartIcon />
+    </div>
+    <ul
+      class="order-summary-list"
+      v-else
+    >
       <li
         class="order-summary-list-list-item"
-        v-if="cartItems.length"
         v-for="prod in cartItems"
       >
         <img
@@ -14,12 +19,11 @@
           :src="prod.product.image.url"
         />
         <p class="order-summary-list-list-item-title">
-          {{prod.product.name}}
+          {{prod.product.name}} ({{prod.quantity}})
         </p>
         <p class="order-summary-list-list-item-price">
-          {{prod.product.price_range.minimum_price.regular_price.value}}
+          {{prod.product.price_range.minimum_price.regular_price.value.toFixed(2)}}
           {{prod.product.price_range.minimum_price.regular_price.currency}}
-          ({{prod.quantity}})
         </p>
         <button
           class="order-summary-list-list-item-button"
@@ -37,10 +41,25 @@
         </button>
       </li>
     </ul>
+    <div
+      class="order-summary-list-list-item"
+      v-if="shippingCosts != null"
+    >
+      <p class="order-summary-list-list-item-tag">
+        Shipping Costs:
+      </p>
+      <p class="order-summary-list-list-item-title">
+        {{shippingCosts.carrier_title}} - ({{shippingCosts.method_title}})
+      </p>
+      <p class="order-summary-list-list-item-price">
+        {{shippingCosts.amount.value.toFixed(2)}}
+        {{shippingCosts.amount.currency}}
+      </p>
+    </div>
     <div class="cart-footer">
       <span class="cart-footer-label"> Total: </span>
       <span class="cart-footer-amount"> {{cartTotal}} </span>
-      <nuxt-link :to="`/checkout/${type}`" v-if="cartActions">
+      <nuxt-link :to="`/checkout/cart`" v-if="cartActions">
         <p class="button">Continue to checkout</p>
       </nuxt-link>
     </div>
@@ -48,15 +67,18 @@
 </template>
 
 <script>
+import EmptyCartIcon from './EmptyCartIcon.vue';
+
 export default {
-  asyncData({ route }) {
-    return { type: route.query.type };
-  },
   name: 'Cart',
   props: {
     cartItems: Array,
     cartTotal: String,
     cartActions: Boolean,
+    shippingCosts: Object,
+  },
+  components: {
+    EmptyCartIcon,
   },
   methods: {
     addToCart(product){
