@@ -1,3 +1,3 @@
 ## Magento Backend
 
- Go to the [README](../README.md) for the setup guide.
+Go to the [README](../README.md) for the setup guide.
