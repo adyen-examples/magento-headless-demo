@@ -52,8 +52,8 @@
       </div>
       <div class="summary-column">
         <Cart
-          :cartItems="cartItems"
-          :cartTotal="cartTotal"
+          :cartItems="cart.cartItems"
+          :cartTotal="cart.cartTotal"
           :cartActions="false"
           :shippingCosts="selectedShippingMethod"
           v-if="!loading"
@@ -202,7 +202,7 @@ export default {
       const selectedShippingAddress = data.cart.shipping_addresses[0];
       
       if(selectedShippingAddress.length === 0 || !selectedShippingAddress) 
-        return;
+        return; 
       
       this.shopperShippingAddress.firstName = selectedShippingAddress.firstname;
       this.shopperShippingAddress.lastName = selectedShippingAddress.lastname;
@@ -220,7 +220,7 @@ export default {
       const selectedBillingAddress = data.cart.billing_address;
       
       if(!selectedBillingAddress) return;
-
+       
       this.shopperBillingAddress.firstName = selectedBillingAddress.firstname;
       this.shopperBillingAddress.lastName = selectedBillingAddress.lastname;
       this.shopperBillingAddress.street = selectedBillingAddress.street[0];
@@ -292,7 +292,7 @@ export default {
     //// FORMS
     // Save ShopperData form locally and set guest email
     async setFormShopperData(details) {
-      let response = await this.addGuestToCart(details.email);
+      const response = await this.addGuestToCart(details.email);
       this.shopperShippingAddress.firstName = details.firstName;
       this.shopperShippingAddress.lastName = details.lastName;
       this.shopperShippingAddress.telephone = details.telephone;
@@ -462,9 +462,8 @@ export default {
     // Query logic to get the adyen details of the transaction
     async adyenDetails(state, component) {
       try {
-        const orderId = this.orderId;
-        let payload = state.data;
-        payload.orderId = orderId;
+        const payload = state.data;
+        payload.orderId = this.orderId;
 
         const response = await graphql.getAdyenPaymentDetails(this.cart.cartId, JSON.stringify(payload));
         console.log(response.adyenPaymentDetails.resultCode);
@@ -479,11 +478,8 @@ export default {
     // Query logic to get the current payment status
     async adyenStatus() {
       try {
-        const cartId = this.cart.cartId;
-        const orderId = this.orderId;
-
-        const response = await graphql.getAdyenPaymentStatus(cartId, orderId);
-        this.adyenStatusResponse  = response;
+        const response = await graphql.getAdyenPaymentStatus(this.cart.cartId, this.orderId);
+        this.adyenStatusResponse = response;
         return response;
 
       } catch (error) {
@@ -494,8 +490,7 @@ export default {
     // Query logic to set guest email on Cart
     async addGuestToCart(shopperEmail) {
       try {
-        const cartId = this.cart.cartId;
-        const response = await graphql.setGuestEmailOnCart(cartId, shopperEmail);
+        const response = await graphql.setGuestEmailOnCart(this.cart.cartId, shopperEmail);
         return response;
 
       } catch (error) {
@@ -506,8 +501,7 @@ export default {
     // Query logic to set shipping address on Cart
     async setShippingAdress(address) {
       try {
-        const cartId = this.cart.cartId;
-        const response = await graphql.setShippingAddressesOnCart(cartId, address);
+        const response = await graphql.setShippingAddressesOnCart(this.cart.cartId, address);
         this.updateShippingForm(response);
         return response;
 
@@ -519,8 +513,7 @@ export default {
     // Query logic to set billing address on Cart
     async setBillingAddress(address) {
       try {
-        const cartId = this.cart.cartId;
-        const response = await graphql.setBillingAddressOnCart(cartId, address);
+        const response = await graphql.setBillingAddressOnCart(this.cart.cartId, address);
         this.updateBillingForm(response);
         return response;
 
@@ -532,9 +525,8 @@ export default {
     // Query logic to set shipping method on Cart
     async setShippingMethod(method) {
       try {
-        const cartId = this.cart.cartId;
         //set shippingmethod
-        const response = await graphql.setShippingMethodsOnCart(cartId, method);
+        const response = await graphql.setShippingMethodsOnCart(this.cart.cartId, method);
         this.selectedShippingMethod = response.cart.shipping_addresses[0].selected_shipping_method;
 
         return response;
@@ -546,9 +538,7 @@ export default {
     // Query logic to get available payment methods based on cart
     async getPaymentMethods() {
       try {
-        const cartId = this.cart.cartId;
-        const response = await graphql.getAdyenPaymentMethods(cartId);
-
+        const response = await graphql.getAdyenPaymentMethods(this.cart.cartId);
         this.paymentMethods = response.data.adyenPaymentMethods.paymentMethodsExtraDetails;
         this.paymentMethodsResponse = response.data.adyenPaymentMethods.paymentMethodsResponse;
 
@@ -563,8 +553,7 @@ export default {
     // Query current cart. Might use this instead of localStorage to retrieve active cart contents
     async queryCart() {
       try {
-        const cartId = this.cart.cartId;
-        const response = await graphql.queryCart(cartId);
+        const response = await graphql.queryCart(this.cart.cartId);
         return response.data;
 
       } catch (error) {
