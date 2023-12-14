@@ -76,6 +76,7 @@
 <script>
 let AdyenCheckout;
 
+
 // CSS Files
 import '@adyen/adyen-web/dist/adyen.css';
 
@@ -121,9 +122,11 @@ export default {
       paymentMethodsResponse: {},
       orderId:'',
       stateData:'',
-      cartId: '',
-      cartItems:[],
-      cartTotal: '',
+      cart: {
+        cartId: '',
+        cartItems: [],
+        cartTotal: ''
+      },
       showShopperForm: true,
       showShippingForm: false,
       showBillingForm: false,
@@ -169,95 +172,113 @@ export default {
 
   methods: {
     async storage() {
-      this.cartId = localStorage.getItem('cart');
+      this.cart.cartId = localStorage.getItem('cart');
+      
       const cartResponse = await this.queryCart();
+      this.cart.cartItems = cartResponse.cart.items;
+      this.cart.cartTotal = cartResponse.cart.prices.grand_total.value.toFixed(2) + " " + cartResponse.cart.prices.grand_total.currency;
 
-      this.cartItems = cartResponse.cart.items;
-      this.cartTotal = cartResponse.cart.prices.grand_total.value.toFixed(2) + " " + cartResponse.cart.prices.grand_total.currency;
-
-      if(cartResponse.cart.email) {
-        this.showShopperForm = false;
-      }
+      if(cartResponse.cart.email) this.showShopperForm = false;
+      
       this.updateShippingForm(cartResponse);
       this.updateBillingForm(cartResponse);
 
       const countryResponse = await graphql.getCountries();
       this.countryOptions = countryResponse.countries;
+      
       this.loading = false;
     },
 
     //// HANDLERS
     // Changing ShippingMethod needs a refresh on PM list using new amount and cart info
     async onCheckBoxChange(event) {
-      let method = this.shippingMethods[event.target.id.substring(event.target.id.indexOf('-') + 1)];
-      let response = await this.setShippingMethod(method);
+      const shippingMethodId = event.target.id.substring(event.target.id.indexOf('-') + 1);
+      const method = this.shippingMethods[shippingMethodId];
+      const response = await this.setShippingMethod(method);
       await this.getPaymentMethods();
     },
 
     updateShippingForm(data) {
-      if(data.cart.shipping_addresses.length > 0) {
-        this.shopperShippingAddress.firstName = data.cart.shipping_addresses[0].firstname;
-        this.shopperShippingAddress.lastName = data.cart.shipping_addresses[0].lastname;
-        this.shopperShippingAddress.street = data.cart.shipping_addresses[0].street[0];
-        this.shopperShippingAddress.city = data.cart.shipping_addresses[0].city;
-        this.shopperShippingAddress.region = data.cart.shipping_addresses[0].region.label;
-        this.shopperShippingAddress.postcode = data.cart.shipping_addresses[0].postcode;
-        this.shopperShippingAddress.country_code = data.cart.shipping_addresses[0].country.code;
-        this.shopperShippingAddress.telephone = data.cart.shipping_addresses[0].telephone;
-        this.shippingMethods = data.cart.shipping_addresses[0].available_shipping_methods;
-        this.showShippingForm = false;
-      }
+      const selectedShippingAddress = data.cart.shipping_addresses[0];
+      
+      if(selectedShippingAddress.length === 0 || !selectedShippingAddress) 
+        return;
+      
+      this.shopperShippingAddress.firstName = selectedShippingAddress.firstname;
+      this.shopperShippingAddress.lastName = selectedShippingAddress.lastname;
+      this.shopperShippingAddress.street = selectedShippingAddress.street[0];
+      this.shopperShippingAddress.city = selectedShippingAddress.city;
+      this.shopperShippingAddress.region = selectedShippingAddress.region.label;
+      this.shopperShippingAddress.postcode = selectedShippingAddress.postcode;
+      this.shopperShippingAddress.country_code = selectedShippingAddress.country.code;
+      this.shopperShippingAddress.telephone = selectedShippingAddress.telephone;
+      this.shippingMethods = selectedShippingAddress.available_shipping_methods;
+      this.showShippingForm = false;
     },
 
     updateBillingForm(data) {
-      if(data.cart.billing_address != null) {
-        this.shopperBillingAddress.firstName = data.cart.billing_address.firstname;
-        this.shopperBillingAddress.lastName = data.cart.billing_address.lastname;
-        this.shopperBillingAddress.street = data.cart.billing_address.street[0];
-        this.shopperBillingAddress.city = data.cart.billing_address.city;
-        this.shopperBillingAddress.region = data.cart.billing_address.region.label;
-        this.shopperBillingAddress.postcode = data.cart.billing_address.postcode;
-        this.shopperBillingAddress.country_code = data.cart.billing_address.country.code;
-        this.shopperBillingAddress.telephone = data.cart.billing_address.telephone;
-        this.showBillingForm = false;
-      }
+      const selectedBillingAddress = data.cart.billing_address;
+      
+      if(!selectedBillingAddress) return;
+
+      this.shopperBillingAddress.firstName = selectedBillingAddress.firstname;
+      this.shopperBillingAddress.lastName = selectedBillingAddress.lastname;
+      this.shopperBillingAddress.street = selectedBillingAddress.street[0];
+      this.shopperBillingAddress.city = selectedBillingAddress.city;
+      this.shopperBillingAddress.region = selectedBillingAddress.region.label;
+      this.shopperBillingAddress.postcode = selectedBillingAddress.postcode;
+      this.shopperBillingAddress.country_code = selectedBillingAddress.country.code;
+      this.shopperBillingAddress.telephone = selectedBillingAddress.telephone;
+      this.showBillingForm = false;
     },
 
     onEditForm(form) {
       switch(form) {
         case "shopper":
-          this.shopperShippingAddress.firstName = '';
-          this.shopperShippingAddress.lastName = '';
-          this.shopperShippingAddress.telephone = '';
-
-          this.shopperBillingAddress.firstName = '';
-          this.shopperBillingAddress.lastName = '';
-          this.shopperBillingAddress.telephone = '';
+          this.shopperShippingAddress = {
+            firstName: '',
+            lastName: '',
+            street: '',
+            city: '',
+            region: '',
+            postcode: '',
+            country_code: '',
+            telephone: '',
+          };
           this.showShopperForm = true;
           break;
         case "shipping":
-          this.shopperShippingAddress.street = '';
-          this.shopperShippingAddress.city = '';
-          this.shopperShippingAddress.postcode = '';
-          this.shopperShippingAddress.region = '';
-          this.shopperShippingAddress.country_code = '';
+          this.shopperShippingAddress = {
+            firstName: '',
+            lastName: '',
+            street: '',
+            city: '',
+            region: '',
+            postcode: '',
+            country_code: '',
+            telephone: '',
+          };
           this.showShippingForm = true;
           break;
         case "billing":
-          this.shopperBillingAddress.street = '';
-          this.shopperBillingAddress.city = '';
-          this.shopperBillingAddress.postcode = '';
-          this.shopperBillingAddress.region = '';
-          this.shopperBillingAddress.country_code = '';
+          this.shopperBillingAddress = {
+            firstName: '',
+            lastName: '',
+            street: '',
+            city: '',
+            region: '',
+            postcode: '',
+            country_code: '',
+            telephone: '',
+          };
           this.showBillingForm = true;
           break;
         case "shipmethod":
           this.selectedShippingMethod = null;
           this.paymentMethods = [];
-          let inputs = document.getElementsByClassName("smethod");
-          for (let input of inputs) {
-            input.checked = false;
-          }
+          const inputs = document
+            .getElementsByClassName("smethod")
+            .forEach(input => input.checked = false);
           break;
       }
     },
@@ -381,6 +402,7 @@ export default {
     },
 
     processResult(paymentStatus) {
+      localStorage.setItem('orderNumber', this.orderId);
       localStorage.setItem('resultCode', paymentStatus.resultCode);
 
       switch (paymentStatus.resultCode) {
@@ -402,10 +424,11 @@ export default {
 
     async handlePaymentError(error) {
       console.error(error);
-      alert("Payment was REFUSED");
+      console.error("Payment was REFUSED");
       await this.getPaymentMethods();
 
     },
+
 
     // GRAPHQL HANDLERS
     /**
@@ -416,21 +439,19 @@ export default {
      */
     async placeOrder(state, component) {
       try {
-        const cartId = this.cartId;
-        const response = await graphql.setPaymentMethodAndPlaceOrder(cartId, state.data);
-
-        if(response.order != null) {
-          this.orderId = response.order.order_id;
-          localStorage.setItem('orderNumber', this.orderId);
-        }
-        let paymentStatus = response.order.adyen_payment_status;
+        const response = await graphql.setPaymentMethodAndPlaceOrder(this.cart.cartId, state.data);
+        this.orderId = response.order.order_id;
+        const paymentStatus = response.order.adyen_payment_status;
 
         if (!paymentStatus.isFinal) {
           let pmtype = state.data.paymentMethod.type === "scheme" ? "card" : state.data.paymentMethod.type;
-          this.checkout.createFromAction(JSON.parse(paymentStatus.action)).mount('#' + pmtype  + '-container');
+          this.checkout
+            .createFromAction(JSON.parse(paymentStatus.action))
+            .mount('#' + pmtype  + '-container');
         } else {
           this.processResult(paymentStatus);
         }
+
         return response;
 
       } catch (error) {
@@ -441,13 +462,12 @@ export default {
     // Query logic to get the adyen details of the transaction
     async adyenDetails(state, component) {
       try {
-        const cartId = this.cartId;
         const orderId = this.orderId;
         let payload = state.data;
         payload.orderId = orderId;
 
-        const response = await graphql.getAdyenPaymentDetails(cartId,  JSON.stringify(payload));
-        alert(response.adyenPaymentDetails.resultCode);
+        const response = await graphql.getAdyenPaymentDetails(this.cart.cartId, JSON.stringify(payload));
+        console.log(response.adyenPaymentDetails.resultCode);
         this.processResult(response.adyenPaymentDetails);
 
         return response;
@@ -459,7 +479,7 @@ export default {
     // Query logic to get the current payment status
     async adyenStatus() {
       try {
-        const cartId = this.cartId;
+        const cartId = this.cart.cartId;
         const orderId = this.orderId;
 
         const response = await graphql.getAdyenPaymentStatus(cartId, orderId);
@@ -474,7 +494,7 @@ export default {
     // Query logic to set guest email on Cart
     async addGuestToCart(shopperEmail) {
       try {
-        const cartId = this.cartId;
+        const cartId = this.cart.cartId;
         const response = await graphql.setGuestEmailOnCart(cartId, shopperEmail);
         return response;
 
@@ -486,7 +506,7 @@ export default {
     // Query logic to set shipping address on Cart
     async setShippingAdress(address) {
       try {
-        const cartId = this.cartId;
+        const cartId = this.cart.cartId;
         const response = await graphql.setShippingAddressesOnCart(cartId, address);
         this.updateShippingForm(response);
         return response;
@@ -499,7 +519,7 @@ export default {
     // Query logic to set billing address on Cart
     async setBillingAddress(address) {
       try {
-        const cartId = this.cartId;
+        const cartId = this.cart.cartId;
         const response = await graphql.setBillingAddressOnCart(cartId, address);
         this.updateBillingForm(response);
         return response;
@@ -512,7 +532,7 @@ export default {
     // Query logic to set shipping method on Cart
     async setShippingMethod(method) {
       try {
-        const cartId = this.cartId;
+        const cartId = this.cart.cartId;
         //set shippingmethod
         const response = await graphql.setShippingMethodsOnCart(cartId, method);
         this.selectedShippingMethod = response.cart.shipping_addresses[0].selected_shipping_method;
@@ -526,7 +546,7 @@ export default {
     // Query logic to get available payment methods based on cart
     async getPaymentMethods() {
       try {
-        const cartId = this.cartId;
+        const cartId = this.cart.cartId;
         const response = await graphql.getAdyenPaymentMethods(cartId);
 
         this.paymentMethods = response.data.adyenPaymentMethods.paymentMethodsExtraDetails;
@@ -543,7 +563,7 @@ export default {
     // Query current cart. Might use this instead of localStorage to retrieve active cart contents
     async queryCart() {
       try {
-        const cartId = this.cartId;
+        const cartId = this.cart.cartId;
         const response = await graphql.queryCart(cartId);
         return response.data;
 
