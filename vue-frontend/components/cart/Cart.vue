@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import EmptyCartIcon from './EmptyCartIcon.vue';
+import EmptyCartIcon from '../icons/EmptyCartIcon.vue';
 
 export default {
   name: 'Cart',

@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import PencilIcon from './PencilIcon.vue';
+import PencilIcon from '../icons/PencilIcon.vue';
 
 export default {
   name: 'AddressForm',

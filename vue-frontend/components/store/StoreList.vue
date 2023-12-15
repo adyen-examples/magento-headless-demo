@@ -3,6 +3,7 @@
     <div
       class="item-container"
       v-for="item in this.storeItems"
+      :key="item.id"
     >
       <img
         class="store-product-img"

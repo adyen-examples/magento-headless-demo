@@ -25,11 +25,11 @@
 </template>
 
 <script>
-import Cart from '../components/Cart.vue';
-import StoreList from '../components/StoreList.vue';
-import RefreshIcon from '../components/RefreshIcon.vue';
+import Cart from '../components/cart/Cart.vue';
+import StoreList from '../components/store/StoreList.vue';
+import RefreshIcon from '../components/icons/RefreshIcon.vue';
 import * as graphql from '../plugins/graphql.js';
-import * as rest from '../plugins/rest.js';
+// import * as rest from '../plugins/rest.js';
 
 
 export default {
