@@ -76,6 +76,7 @@
 <script>
 let AdyenCheckout;
 
+
 // CSS Files
 import '@adyen/adyen-web/dist/adyen.css';
 
