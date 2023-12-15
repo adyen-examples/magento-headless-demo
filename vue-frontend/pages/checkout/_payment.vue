@@ -1,13 +1,13 @@
 <template>
-  <main class="payment-page" v-if="!loading">
+  <main class="payment-page" v-if="!options.loading">
     <div class="top-container">
       <div class="margin-container">
       </div>
       <div id="payment-page" class="store-container">
-        <div class="forms" v-if="!loading">
+        <div class="forms" v-if="!options.loading">
           <div class="form-shopper-data">
             <DetailsForm
-              :isDetailsSet="showShopperForm"
+              :isDetailsSet="options.showShopperForm"
               :title="'Your Details'"
               :type="'shopper'"
               @send-form="setFormShopperData"
@@ -16,7 +16,7 @@
           </div>
           <div class="form-shipping-data">
             <AddressForm
-              :isAddressSet="showShippingForm"
+              :isAddressSet="options.showShippingForm"
               :canSameBilling="true"
               :title="'Shipping Address'"
               :type="'shipping'"
@@ -27,7 +27,7 @@
           </div>
           <div class="form-billing-data">
             <AddressForm
-              :isAddressSet="showBillingForm"
+              :isAddressSet="options.showBillingForm"
               :canSameBilling="false"
               :title="'Billing Address'"
               :type="'billing'"
@@ -38,7 +38,7 @@
           </div>
           <div class="shipping-method-selector">
             <ShippingMethodForm
-              :shippingMethods="shippingMethods"
+              :shippingMethods="checkoutData.shippingMethods"
               :type="'shipmethod'"
               :isShippingMethodSet="selectedShippingMethod != null"
               @send-form="onCheckBoxChange"
@@ -56,13 +56,13 @@
           :cartTotal="cart.cartTotal"
           :cartActions="false"
           :shippingCosts="selectedShippingMethod"
-          v-if="!loading"
+          v-if="!options.loading"
         />
       </div>
     </div>
     <PaymentArea
-      :paymentMethods="paymentMethods"
-      :paymentMethodsResponse="paymentMethodsResponse"
+      :paymentMethods="checkoutData.paymentMethods"
+      :paymentMethodsResponse="checkoutData.paymentMethodsResponse"
       :selectedpm="selectedpm"
       @change-pm="onSelectPaymentMethod"
       v-if="selectedShippingMethod"
@@ -75,7 +75,6 @@
 
 <script>
 let AdyenCheckout;
-
 
 // CSS Files
 import '@adyen/adyen-web/dist/adyen.css';
@@ -111,7 +110,21 @@ export default {
   },
   data() {
     return {
-      loading: true,
+      options: {
+        loading: true,
+        showShopperForm: true,
+        showShippingForm: false,
+        showBillingForm: false,
+      },
+      checkoutData: {
+        checkout: '',
+        paymentMethods: [],
+        shippingMethods: [],
+        paymentMethodsResponse: {},
+        adyenStatusResponse: '',
+        stateData:'',
+
+      },
       checkout: '',
       selectedpm: '',
       selectedShippingMethod: null,
@@ -127,9 +140,6 @@ export default {
         cartItems: [],
         cartTotal: ''
       },
-      showShopperForm: true,
-      showShippingForm: false,
-      showBillingForm: false,
       shopperBillingAddress: {
         firstName: '',
         lastName: '',
@@ -173,37 +183,37 @@ export default {
   methods: {
     async storage() {
       this.cart.cartId = localStorage.getItem('cart');
-      
+
       const cartResponse = await this.queryCart();
       this.cart.cartItems = cartResponse.cart.items;
       this.cart.cartTotal = cartResponse.cart.prices.grand_total.value.toFixed(2) + " " + cartResponse.cart.prices.grand_total.currency;
 
-      if(cartResponse.cart.email) this.showShopperForm = false;
-      
+      if(cartResponse.cart.email) this.options.showShopperForm = false;
+
       this.updateShippingForm(cartResponse);
       this.updateBillingForm(cartResponse);
 
       const countryResponse = await graphql.getCountries();
       this.countryOptions = countryResponse.countries;
-      
-      this.loading = false;
+
+      this.options.loading = false;
     },
 
     //// HANDLERS
     // Changing ShippingMethod needs a refresh on PM list using new amount and cart info
     async onCheckBoxChange(event) {
       const shippingMethodId = event.target.id.substring(event.target.id.indexOf('-') + 1);
-      const method = this.shippingMethods[shippingMethodId];
+      const method = this.checkoutData.shippingMethods[shippingMethodId];
       const response = await this.setShippingMethod(method);
       await this.getPaymentMethods();
     },
 
     updateShippingForm(data) {
       const selectedShippingAddress = data.cart.shipping_addresses[0];
-      
-      if(selectedShippingAddress.length === 0 || !selectedShippingAddress) 
-        return; 
-      
+
+      if(!selectedShippingAddress)
+        return;
+
       this.shopperShippingAddress.firstName = selectedShippingAddress.firstname;
       this.shopperShippingAddress.lastName = selectedShippingAddress.lastname;
       this.shopperShippingAddress.street = selectedShippingAddress.street[0];
@@ -212,15 +222,15 @@ export default {
       this.shopperShippingAddress.postcode = selectedShippingAddress.postcode;
       this.shopperShippingAddress.country_code = selectedShippingAddress.country.code;
       this.shopperShippingAddress.telephone = selectedShippingAddress.telephone;
-      this.shippingMethods = selectedShippingAddress.available_shipping_methods;
-      this.showShippingForm = false;
+      this.checkoutData.shippingMethods = selectedShippingAddress.available_shipping_methods;
+      this.options.showShippingForm = false;
     },
 
     updateBillingForm(data) {
       const selectedBillingAddress = data.cart.billing_address;
-      
+
       if(!selectedBillingAddress) return;
-       
+
       this.shopperBillingAddress.firstName = selectedBillingAddress.firstname;
       this.shopperBillingAddress.lastName = selectedBillingAddress.lastname;
       this.shopperBillingAddress.street = selectedBillingAddress.street[0];
@@ -229,7 +239,7 @@ export default {
       this.shopperBillingAddress.postcode = selectedBillingAddress.postcode;
       this.shopperBillingAddress.country_code = selectedBillingAddress.country.code;
       this.shopperBillingAddress.telephone = selectedBillingAddress.telephone;
-      this.showBillingForm = false;
+      this.options.showBillingForm = false;
     },
 
     onEditForm(form) {
@@ -245,7 +255,7 @@ export default {
             country_code: '',
             telephone: '',
           };
-          this.showShopperForm = true;
+          this.options.showShopperForm = true;
           break;
         case "shipping":
           this.shopperShippingAddress = {
@@ -258,7 +268,7 @@ export default {
             country_code: '',
             telephone: '',
           };
-          this.showShippingForm = true;
+          this.options.showShippingForm = true;
           break;
         case "billing":
           this.shopperBillingAddress = {
@@ -271,11 +281,11 @@ export default {
             country_code: '',
             telephone: '',
           };
-          this.showBillingForm = true;
+          this.options.showBillingForm = true;
           break;
         case "shipmethod":
           this.selectedShippingMethod = null;
-          this.paymentMethods = [];
+          this.checkoutData.paymentMethods = [];
           const inputs = document
             .getElementsByClassName("smethod")
             .forEach(input => input.checked = false);
@@ -302,8 +312,8 @@ export default {
       this.shopperBillingAddress.telephone = details.telephone;
 
       if(response.data.setGuestEmailOnCart.cart){
-        this.showShopperForm = false;
-        this.showShippingForm = true;
+        this.options.showShopperForm = false;
+        this.options.showShippingForm = true;
       }
     },
 
@@ -318,13 +328,13 @@ export default {
         if(address.samebilling) {
           const responseSecond = await this.setBillingAddress(address);
           if(responseSecond.cart) {
-            this.showBillingForm = false;
+            this.options.showBillingForm = false;
           }
         }
         else {
-          this.shopperBillingAddress.street == '' ? this.showBillingForm = true : null;
+          this.shopperBillingAddress.street == '' ? this.options.showBillingForm = true : null;
         }
-        this.showShippingForm = false;
+        this.options.showShippingForm = false;
       }
     },
 
@@ -340,7 +350,7 @@ export default {
       this.shopperBillingAddress.country_code = address.country_code;
       let response = await this.setBillingAddress(address);
       if(response.cart){
-        this.showBillingForm = false;
+        this.options.showBillingForm = false;
       }
     },
 
@@ -351,7 +361,7 @@ export default {
         environment: 'test',
         clientKey: process.env.ADYEN_CLIENT_KEY,
         countryCode: this.shopperBillingAddress.country_code,
-        paymentMethodsResponse: this.paymentMethodsResponse,
+        paymentMethodsResponse: this.checkoutData.paymentMethodsResponse,
         onPaymentCompleted: (result, component) => {
           console.info(result, component);
         },
@@ -367,10 +377,10 @@ export default {
       };
 
       const pmExclude = ['applepay', 'c_cash', 'paypal', 'genericgiftcard', 'givex'];
-      this.paymentMethods = this.paymentMethods.filter((pm, index) => !pmExclude.includes(pm.type));
-      this.paymentMethodsResponse.paymentMethods = this.paymentMethodsResponse.paymentMethods.filter((pm, index) => !pmExclude.includes(pm.type));
+      this.checkoutData.paymentMethods = this.checkoutData.paymentMethods.filter((pm, index) => !pmExclude.includes(pm.type));
+      this.checkoutData.paymentMethodsResponse.paymentMethods = this.checkoutData.paymentMethodsResponse.paymentMethods.filter((pm, index) => !pmExclude.includes(pm.type));
       let schemeDuplicate = -1;
-      let configs = this.paymentMethods.map((pm, index) => {
+      let configs = this.checkoutData.paymentMethods.map((pm, index) => {
         if (pm.configuration) {
           if(pm.type == 'scheme'){
             pm.type = 'card';
@@ -385,16 +395,16 @@ export default {
       //schemeDuplicate != -1 ? this.paymentMethods = this.paymentMethods.filter((pm, index) => index != schemeDuplicate) : null;
 
       const checkout = await AdyenCheckout(configuration);
-      this.checkout = checkout;
+      this.checkoutData.checkout = checkout;
 
       // Mount config into each container
-      this.paymentMethods.map((pm, index) => pm.type != 'scheme' ? checkout.create(pm.type, configuration).mount('#' + pm.type + '-container') : null);
+      this.checkoutData.paymentMethods.map((pm, index) => pm.type != 'scheme' ? checkout.create(pm.type, configuration).mount('#' + pm.type + '-container') : null);
 
     },
 
     // Function for components onchange listener (not used atm but can be used to show changes in state data
     handleOnChange(state, component) {
-      this.stateData = state.data;
+      this.checkoutData.stateData = state.data;
     },
 
     handleDetails(state, component) {
@@ -445,7 +455,7 @@ export default {
 
         if (!paymentStatus.isFinal) {
           let pmtype = state.data.paymentMethod.type === "scheme" ? "card" : state.data.paymentMethod.type;
-          this.checkout
+          this.checkoutData.checkout
             .createFromAction(JSON.parse(paymentStatus.action))
             .mount('#' + pmtype  + '-container');
         } else {
@@ -479,7 +489,7 @@ export default {
     async adyenStatus() {
       try {
         const response = await graphql.getAdyenPaymentStatus(this.cart.cartId, this.orderId);
-        this.adyenStatusResponse = response;
+        this.checkoutData.adyenStatusResponse = response;
         return response;
 
       } catch (error) {
@@ -539,8 +549,8 @@ export default {
     async getPaymentMethods() {
       try {
         const response = await graphql.getAdyenPaymentMethods(this.cart.cartId);
-        this.paymentMethods = response.data.adyenPaymentMethods.paymentMethodsExtraDetails;
-        this.paymentMethodsResponse = response.data.adyenPaymentMethods.paymentMethodsResponse;
+        this.checkoutData.paymentMethods = response.data.adyenPaymentMethods.paymentMethodsExtraDetails;
+        this.checkoutData.paymentMethodsResponse = response.data.adyenPaymentMethods.paymentMethodsResponse;
 
         await this.createConfig();
         return response;
