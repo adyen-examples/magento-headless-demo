@@ -64,13 +64,14 @@
 </template>
 
 <script>
-import PencilIcon from '../icons/PencilIcon.vue';
+import PencilIcon from './PencilIcon.vue';
 
 export default {
   name: 'AddressForm',
   components: {
     PencilIcon,
   },
+  emits: ['send-form', 'edit-form'],
   props: {
     isAddressSet: Boolean,
     canSameBilling: Boolean,

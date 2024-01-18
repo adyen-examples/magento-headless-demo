@@ -5,7 +5,8 @@ const { v4: uuid } = require("uuid");
 const { hmacValidator } = require('@adyen/api-library');
 const { Client, Config, CheckoutAPI } = require("@adyen/api-library");
 const { Nuxt, Builder } = require("nuxt");
-
+const https = require('https');
+const fs = require('fs');
 // Init app
 const app = express();
 
@@ -36,7 +37,6 @@ async function start() {
   const nuxt = new Nuxt(nuxtConfig);
 
   const { host, port } = nuxt.options.server;
-
   await nuxt.ready();
   if (nuxtConfig.dev) {
     const builder = new Builder(nuxt);
@@ -44,11 +44,11 @@ async function start() {
   }
 
   app.use(nuxt.render);
-
-  app.listen(port, host);
-  consola.ready({
-    message: `Server listening on ${host}:${port}`,
-    badge: true
-  });
+  //app.use(https);
+  https.createServer(nuxt.options.server.https, app).listen(port, host);
+ // consola.ready({
+ //   message: `Server listening on ${host}:${port}`,
+ //   badge: true
+ // });
 }
 start();

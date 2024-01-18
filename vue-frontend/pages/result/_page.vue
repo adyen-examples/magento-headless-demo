@@ -26,7 +26,7 @@
         <span v-else-if="type === 'pending'">
           Your order has been received! Payment completion pending.
         </span>
-        <span v-else> Your order {{this.orderId}} has been successfully placed. </span>
+        <span v-else> Your order {{ this.orderId }} has been successfully placed. </span>
       </p>
       <nuxt-link class="button" to="/">Return Home</nuxt-link>
     </div>

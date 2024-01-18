@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import EmptyCartIcon from '../icons/EmptyCartIcon.vue';
+import EmptyCartIcon from './EmptyCartIcon.vue';
 
 export default {
   name: 'Cart',
@@ -86,8 +86,7 @@ export default {
     },
     removeFromCart(product){
       this.$emit('remove-item', product);
-    },
-
+    }
   }
 }
 </script>
