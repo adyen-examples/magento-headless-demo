@@ -1,10 +1,14 @@
 require("dotenv").config();
-
+var fs = require('fs');
 module.exports = {
   telemetry: false,
   server: {
-    host: "0.0.0.0",
-    port: process.env.PORT,
+    host: "192.168.58.20",
+    port: "3000",
+    https: {
+      key: fs.readFileSync('/etc/nginx/magento.key'),
+      cert: fs.readFileSync('/etc/nginx/magento.cer')
+    },
   },
   /*
    ** Headers of the page

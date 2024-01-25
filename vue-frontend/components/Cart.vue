@@ -3,16 +3,14 @@
     <h2>
       Cart
     </h2>
-    <div class="order-summary-list" v-if="cartItems.length == 0">
+    <div class="order-summary-list" v-if="isCartEmpty">
       <EmptyCartIcon />
     </div>
-    <ul
-      class="order-summary-list"
-      v-else
-    >
+    <ul class="order-summary-list" v-else>
       <li
         class="order-summary-list-list-item"
         v-for="prod in cartItems"
+        :key="prod.product.id"
       >
         <img
           class="product-img"
@@ -27,24 +25,21 @@
         </p>
         <button
           class="order-summary-list-list-item-button"
-          v-on:click="addToCart(prod.product)"
+          @click="addToCart(prod.product)"
           v-if="cartActions"
         >
           +
         </button>
         <button
           class="order-summary-list-list-item-button"
-          v-on:click="removeFromCart(prod.id)"
+          @click="removeFromCart(prod.id)"
           v-if="cartActions"
         >
           -
         </button>
       </li>
     </ul>
-    <div
-      class="order-summary-list-list-item"
-      v-if="shippingCosts != null"
-    >
+    <div class="order-summary-list-list-item" v-if="shippingCosts !== null">
       <p class="order-summary-list-list-item-tag">
         Shipping Costs:
       </p>
@@ -80,14 +75,18 @@ export default {
   components: {
     EmptyCartIcon,
   },
+  computed: {
+    isCartEmpty() {
+      return this.cartItems && this.cartItems.length == 0;
+    },
+  },
   methods: {
     addToCart(product){
       this.$emit('add-item', product);
     },
     removeFromCart(product){
       this.$emit('remove-item', product);
-    },
-
+    }
   }
 }
 </script>

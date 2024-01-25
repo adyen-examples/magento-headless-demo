@@ -30,7 +30,7 @@ import StoreList from '../components/StoreList.vue';
 import RefreshIcon from '../components/RefreshIcon.vue';
 import * as graphql from '../plugins/graphql.js';
 import * as rest from '../plugins/rest.js';
-
+import { ref, onMounted } from 'vue';
 
 export default {
   head: {
@@ -41,108 +41,123 @@ export default {
     StoreList,
     RefreshIcon,
   },
-  data() {
-    return {
-      cartId: '',
-      storeItems: [],
-      cartItems: [],
-      cartTotal: "0.00 EUR",
-      loading: true,
-    }
-  },
+  setup() {
+    const cartId = ref('');
+    const storeItems = ref([]);
+    const cartItems = ref([]);
+    const cartTotal = ref('0.00 EUR');
+    const loading = ref(true);
 
-  async mounted() {
-    await this.listStoreItems();
-    await this.storage();
-  },
+    // When mounted, retrieve localStorage and query magento store items
+    onMounted(async function () {
+      await listStoreItems();
+      await storage();
+    });
 
-  methods: {
-    async storage() {
-
+    // Retrieves the relevant localStorage data and updated cart with response
+    const storage = async function() {
       // Set localstorage item to local cartId (if exists), or get new cartId and save to localStorage
+      if (localStorage.getItem('orderNumber') != null) {
+        localStorage.removeItem('orderNumber');
+      }
+
       let storedCart = localStorage.getItem('cart');
       if (storedCart != null) {
-        this.cartId = storedCart;
-        const response = await this.queryCart();
-        this.updateCart(response);
+        cartId.value = storedCart;
+        const response = await queryCart();
+        updateCart(response);
+
       } else {
-        await this.getCartId();
-        localStorage.setItem('cart', this.cartId);
+        await getCartId();
+        localStorage.setItem('cart', cartId.value);
       }
-      this.loading = false;
-    },
+      loading.value = false;
+    };
 
     // Update cartItems and cartTotal based on a response object
-    updateCart(responseObj) {
-      this.cartItems = responseObj.cart.items;
-      this.cartTotal = responseObj.cart.prices.grand_total.value.toFixed(2) + " " + responseObj.cart.prices.grand_total.currency;
-    },
+    const updateCart = function(responseObj) {
+      cartItems.value = responseObj.cart.items;
+      cartTotal.value = responseObj.cart.prices.grand_total.value.toFixed(2) + " " + responseObj.cart.prices.grand_total.currency;
+    };
 
     // Query for a new guest cartId and set to data var
-    async getCartId() {
+    const getCartId = async function() {
       try {
         const response = await graphql.getCartId();
-        this.cartId = response;
+        cartId.value = response;
         return response;
 
       } catch (error) {
         console.error(error);
       }
-    },
+    };
 
     // Query search for items in Magento inventory. Search so far restricted to bags to avoid sizes and color selections mandatory for some items
-    async listStoreItems() {
+    const listStoreItems = async function() {
       try {
         const queryString = "Messenger";
         const response = await graphql.searchProducts(queryString);
-        this.storeItems = response;
-
+        storeItems.value = response;
         return response;
       } catch (error) {
         console.error(error);
       }
-    },
+    };
 
     // Query to add item to current cart and update cart info
-    async addItem(item) {
+    const addItem = async function(item) {
       try {
-        const cartId = this.cartId;
+        const cart = cartId.value;
         const sku = item.sku;
         const quantity = 1;
 
-        const response = await graphql.addProductsToCart(cartId, sku, quantity);
-        this.updateCart(response);
+        const response = await graphql.addProductsToCart(cart, sku, quantity);
+        updateCart(response);
         return response;
       } catch (error) {
         console.error(error);
       }
-    },
+    };
 
     // Query to delete all instances of an item from current cart and update cart info
-    async deleteItem(item) {
+    const deleteItem = async function(item) {
       try {
-        const cartId = this.cartId;
+        const cart = cartId.value;
         const productId = item;
 
-        const response = await graphql.removeItemFromCart(cartId, productId);
-        this.updateCart(response);
+        const response = await graphql.removeItemFromCart(cart, productId);
+        updateCart(response);
         return response;
       } catch (error) {
         console.error(error);
       }
-    },
+    };
 
     // Query current cart info
-    async queryCart() {
+    const queryCart = async function() {
       try {
-        const cartId = this.cartId;
-        const response = await graphql.queryCart(cartId);
+        const cart = cartId.value;
+        const response = await graphql.queryCart(cart);
         return response.data;
       } catch (error) {
         console.error(error);
       }
-    },
-  },
+    };
 
-};
+    return {
+      cartId,
+      storeItems,
+      cartItems,
+      cartTotal,
+      loading,
+      storage,
+      updateCart,
+      getCartId,
+      listStoreItems,
+      addItem,
+      deleteItem,
+      queryCart,
+    }
+  }
+}
 </script>

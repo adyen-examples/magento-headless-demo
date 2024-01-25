@@ -71,6 +71,7 @@ export default {
   components: {
     PencilIcon,
   },
+  emits: ['send-form', 'edit-form'],
   props: {
     isAddressSet: Boolean,
     canSameBilling: Boolean,

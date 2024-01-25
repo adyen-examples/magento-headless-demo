@@ -4,7 +4,7 @@
     <div class="payment-container">
       <div
         class="container-wrapper"
-        v-for="(pm, index) in this.paymentMethods"
+        v-for="(pm, index) in paymentMethods"
         :key="index"
       >
         <div
